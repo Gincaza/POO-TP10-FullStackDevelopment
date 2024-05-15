@@ -11,7 +11,7 @@ class DatabaseManagerTest(unittest.TestCase):
         # Configurar um cliente
         self.database.insert_table_clientes("Gustavo", "Faro", 913528755)
         # Executar o método que está sendo testado
-        clients = self.database.get_all_table_clients()
+        clients = self.database.get_table("clientes")
         # Verificar se o resultado está conforme o esperado
         self.assertEqual(clients, [(1, "Gustavo", "Faro", "913528755")])
 

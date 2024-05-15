@@ -67,16 +67,6 @@ class DatabaseManager:
                 """
             cursor = conn.cursor()
             cursor.execute(sql, (nome, morada, telefone))
-    
-    def get_all_table_clients(self):
-        try:
-            with sqlite3.connect(f"{self.__databasename}.db") as conn:
-                cursor = conn.cursor()
-                cursor.execute("SELECT * FROM clientes")
-                rows = cursor.fetchall()
-                return rows
-        except sqlite3.Error as e:
-            raise Exception(f"Erro ao buscar a tabela Clientes: {str(e)}")
 
     def get_cliente_id(self, name):
         with sqlite3.connect(f"{self.__databasename}.db") as conn:
@@ -90,30 +80,29 @@ class DatabaseManager:
                 raise Exception("Nenhum resultado encontrado para o nome fornecido.")
             return result[0]
 
-    def insert_sensor(self, location_name, sensor_name, unit):
+    def insert_ingredientes(self, nome):
         try:
-            idLocation = self.get_location_id(location_name)
             with sqlite3.connect(f"{self.__databasename}.db") as conn:
                 cursor = conn.cursor()
 
                 sql = """
-                    INSERT INTO Sensor(idLocation, name, unit) VALUES(?, ?, ?);
+                    INSERT INTO ingredientes(nome) VALUES(?);
                     """
 
-                cursor.execute(sql, (idLocation, sensor_name, unit))
+                cursor.execute(sql, (nome,))
 
         except sqlite3.Error as e:
             raise Exception(f"Erro ao inserir o sensor: {str(e)}")
 
-    def get_all_table_sensor(self):
+    def get_table(self, table):
         try:
             with sqlite3.connect(f"{self.__databasename}.db") as conn:
                 cursor = conn.cursor()
-                cursor.execute("SELECT * FROM Sensor")
+                cursor.execute(f"SELECT * FROM {table}")
                 rows = cursor.fetchall()
                 return rows
         except sqlite3.Error as e:
-            raise Exception(f"Erro ao buscar a tabela Sensor: {str(e)}")
+            raise Exception(f"Erro ao buscar a tabela Clientes: {str(e)}")
 
     def update_table_sensor(self, sensor_id, name, unit):
         try:
