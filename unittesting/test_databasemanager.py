@@ -22,3 +22,14 @@ class DatabaseManagerTest(unittest.TestCase):
         client_id = self.database.get_cliente_id("Gustavo")
 
         self.assertEqual(client_id, 1)
+
+    def test_update_table_client_returns_cliente(self):
+        #set up
+        self.database.insert_table_clientes("Gustavo", "Faro", 555)
+
+        #act
+        self.database.update_table_client(1, "Pedro", "Quarteira", 666)
+
+        clientes = self.database.get_table("clientes")
+        #Assert
+        self.assertEqual([(1, "Pedro", "Quarteira", "666")], clientes)

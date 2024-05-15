@@ -79,6 +79,19 @@ class DatabaseManager:
             if result is None:
                 raise Exception("Nenhum resultado encontrado para o nome fornecido.")
             return result[0]
+    
+    def update_table_client(self, id_cliente, nome, morada, telefone):
+        try:
+            with sqlite3.connect(f"{self.__databasename}.db") as conn:
+                cursor = conn.cursor()
+                sql = """
+                    UPDATE Sensor 
+                    SET nome = ?, morada = ?, telefone = ?
+                    WHERE id_cliente = ?;
+                    """
+                cursor.execute(sql, (nome, morada, telefone, id_cliente))
+        except sqlite3.Error as e:
+            raise Exception(f"Erro ao atualizar o cliente: {str(e)}")
 
     def insert_ingredientes(self, nome):
         try:
@@ -103,19 +116,6 @@ class DatabaseManager:
                 return rows
         except sqlite3.Error as e:
             raise Exception(f"Erro ao buscar a tabela Clientes: {str(e)}")
-
-    def update_table_sensor(self, sensor_id, name, unit):
-        try:
-            with sqlite3.connect(f"{self.__databasename}.db") as conn:
-                cursor = conn.cursor()
-                sql = """
-                    UPDATE Sensor 
-                    SET name = ?, unit = ? 
-                    WHERE idSensor = ?;
-                    """
-                cursor.execute(sql, (name, unit, sensor_id))
-        except sqlite3.Error as e:
-            raise Exception(f"Erro ao atualizar o sensor: {str(e)}")
 
     def delete_table_sensor(self, sensor_id):
         try:
