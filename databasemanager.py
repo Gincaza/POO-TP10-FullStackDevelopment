@@ -43,13 +43,17 @@ class DatabaseManager:
         self.__databasename = databasename
         self.create_database(databasename)
 
-    def insert_table_clientes(self, nome, morada, telefone):
-        with sqlite3.connect(f"{self.__databasename}.db") as conn:
-            sql = """
-                INSERT INTO clientes(nome, morada, telefone) VALUES(?, ?, ?);
-                """
-            cursor = conn.cursor()
-            cursor.execute(sql, (nome, morada, telefone))
+    def insert_cliente(self, nome, morada, telefone):
+        try:
+            with sqlite3.connect(f"{self.__databasename}.db") as conn:
+                sql = """
+                    INSERT INTO clientes (nome, morada, telefone) VALUES (?, ?, ?);
+                    """
+                cursor = conn.cursor()
+                cursor.execute(sql, (nome, morada, telefone))
+                conn.commit()
+        except sqlite3.Error as e:
+            print(f"Erro ao inserir cliente: {e}")
 
     def get_cliente_id(self, name):
         with sqlite3.connect(f"{self.__databasename}.db") as conn:
