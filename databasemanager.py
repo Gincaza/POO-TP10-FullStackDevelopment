@@ -68,17 +68,16 @@ class DatabaseManager:
         except sqlite3.Error as e:
             print(f"Erro ao buscar cliente: {e}")
 
-    def get_cliente_id(self, name):
-        with sqlite3.connect(f"{self.__databasename}.db") as conn:
-            cursor = conn.cursor()
-
-            sql = "SELECT id_cliente FROM clientes WHERE nome = ?;"
-
-            cursor.execute(sql, (name,))
-            result = cursor.fetchone()
-            if result is None:
-                raise Exception("Nenhum resultado encontrado para o nome fornecido.")
-            return result[0]
+    def get_cliente_by_nome(self, nome):
+        try:
+            with sqlite3.connect(f"{self.__databasename}.db") as conn:
+                cursor = conn.cursor()
+                sql = "SELECT * FROM clientes WHERE nome = ?;"
+                cursor.execute(sql, (nome,))
+                result = cursor.fetchone()
+                return result
+        except sqlite3.Error as e:
+            print(f"Erro ao buscar cliente: {e}")
     
     def update_table_client(self, id_cliente, nome, morada, telefone):
         try:
