@@ -41,6 +41,15 @@ class DatabaseManagerTest(unittest.TestCase):
         cliente = self.database.get_cliente_by_nome("Gustavo")
         #Assert
         self.assertEqual(cliente, (1, "Gustavo", "Faro", "996613332"))
+    
+    def test_update_client_returns_cliente_updated(self):
+        #Set up
+        self.database.insert_cliente("Gustavo", "Faro", "888")
+        #Execute
+        self.database.update_cliente(1, "Pedro", "Faro", "999")
+        #Assert
+        cliente_updated = self.database.get_cliente_by_nome("Pedro")
+        self.assertEqual(cliente_updated, (1, "Pedro", "Faro", "999"))
 
 if __name__ == "__main__":
     unittest.main()

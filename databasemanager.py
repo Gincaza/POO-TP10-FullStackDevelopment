@@ -79,18 +79,19 @@ class DatabaseManager:
         except sqlite3.Error as e:
             print(f"Erro ao buscar cliente: {e}")
     
-    def update_table_client(self, id_cliente, nome, morada, telefone):
+    def update_cliente(self, id_cliente, nome, morada, telefone):
         try:
             with sqlite3.connect(f"{self.__databasename}.db") as conn:
                 cursor = conn.cursor()
                 sql = """
-                    UPDATE Sensor 
+                    UPDATE clientes
                     SET nome = ?, morada = ?, telefone = ?
                     WHERE id_cliente = ?;
                     """
                 cursor.execute(sql, (nome, morada, telefone, id_cliente))
+                conn.commit()
         except sqlite3.Error as e:
-            raise Exception(f"Erro ao atualizar o cliente: {str(e)}")
+            print(f"Erro ao atualizar cliente: {e}")
 
     def insert_ingredientes(self, nome):
         try:
