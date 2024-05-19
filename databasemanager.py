@@ -127,8 +127,6 @@ class DatabaseManager:
         except sqlite3.Error as e:
             raise Exception(f"Erro ao deletar: {str(e)}")
     
-    def __del__(self):
-        os.remove(f"{self.__databasename}.db")
 
 
 
