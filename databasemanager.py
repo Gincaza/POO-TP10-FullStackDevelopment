@@ -12,43 +12,26 @@ class DatabaseManager:
                         id_cliente INTEGER PRIMARY KEY,
                         nome TEXT,
                         morada TEXT,
-                        telefone TEXT
+                        telefone TEXT UNIQUE
                     );
 
                     CREATE TABLE IF NOT EXISTS 
-                    ingredientes (
-                        id_ingrediente INTEGER PRIMARY KEY,
-                        nome TEXT
-                    );
-
-                    CREATE TABLE IF NOT EXISTS  
                     hamburgueres (
-                        id_hamburguer INTEGER PRIMARY KEY,
-                        nome_hamburguer TEXT,
-                        preco REAL,
-                        disponivel BOOLEAN
-                    );
-
-                    CREATE TABLE IF NOT EXISTS 
-                    hamburgueres_ingredientes (
-                        id_hamburguer INTEGER,
-                        id_ingrediente INTEGER,
-                        quantidade INTEGER,
-                        FOREIGN KEY (id_hamburguer) REFERENCES hamburgueres(id_hamburguer),
-                        FOREIGN KEY (id_ingrediente) REFERENCES ingredientes(id_ingrediente)
+                        nome_hamburguer TEXT PRIMARY KEY,
+                        ingredientes TEXT
                     );
 
                     CREATE TABLE IF NOT EXISTS 
                     pedidos (
                         id_pedido INTEGER PRIMARY KEY,
                         id_cliente INTEGER,
-                        id_hamburguer INTEGER,
+                        nome_hamburguer TEXT,
                         quantidade INTEGER,
                         tamanho TEXT,
                         data_hora DATETIME,
                         valor_total REAL,
                         FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente),
-                        FOREIGN KEY (id_hamburguer) REFERENCES hamburgueres(id_hamburguer)
+                        FOREIGN KEY (nome_hamburguer) REFERENCES hamburgueres(nome_hamburguer)
                     );
                     """
                 cursor = conn.cursor()
