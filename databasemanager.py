@@ -117,15 +117,15 @@ class DatabaseManager:
         except sqlite3.Error as e:
             raise Exception(f"Erro ao buscar a tabela Clientes: {str(e)}")
 
-    def delete_table_sensor(self, sensor_id):
+    def delete_cliente(self, id_cliente):
         try:
             with sqlite3.connect(f"{self.__databasename}.db") as conn:
                 cursor = conn.cursor()
-                sql = """DELETE FROM Sensor WHERE idSensor = ?;"""
-
-                cursor.execute(sql, (sensor_id,))
+                sql = "DELETE FROM clientes WHERE id_cliente = ?;"
+                cursor.execute(sql, (id_cliente,))
+                conn.commit()
         except sqlite3.Error as e:
-            raise Exception(f"Erro ao deletar: {str(e)}")
+            print(f"Erro ao deletar cliente: {e}")
     
 
 
