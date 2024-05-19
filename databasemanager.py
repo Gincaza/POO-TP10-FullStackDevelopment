@@ -93,19 +93,17 @@ class DatabaseManager:
         except sqlite3.Error as e:
             print(f"Erro ao atualizar cliente: {e}")
 
-    def insert_ingredientes(self, nome):
+    def insert_hamburguer(self, nome_hamburguer, ingredientes):
         try:
             with sqlite3.connect(f"{self.__databasename}.db") as conn:
                 cursor = conn.cursor()
-
                 sql = """
-                    INSERT INTO ingredientes(nome) VALUES(?);
+                    INSERT INTO hamburgueres (nome_hamburguer, ingredientes) VALUES (?, ?);
                     """
-
-                cursor.execute(sql, (nome,))
-
+                cursor.execute(sql, (nome_hamburguer, ingredientes))
+                conn.commit()
         except sqlite3.Error as e:
-            raise Exception(f"Erro ao inserir o sensor: {str(e)}")
+            print(f"Erro ao inserir hambúrguer: {e}")
 
     def get_table(self, table):
         try:
