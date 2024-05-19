@@ -104,6 +104,19 @@ class DatabaseManager:
                 conn.commit()
         except sqlite3.Error as e:
             print(f"Erro ao inserir hambúrguer: {e}")
+    
+    def insert_pedido(self, id_cliente, nome_hamburguer, quantidade, tamanho, data_hora, valor_total):
+        try:
+            with sqlite3.connect(f"{self.__databasename}.db") as conn:
+                cursor = conn.cursor()
+                sql = """
+                    INSERT INTO pedidos (id_cliente, nome_hamburguer, quantidade, tamanho, data_hora, valor_total) 
+                    VALUES (?, ?, ?, ?, ?, ?);
+                    """
+                cursor.execute(sql, (id_cliente, nome_hamburguer, quantidade, tamanho, data_hora, valor_total))
+                conn.commit()
+        except sqlite3.Error as e:
+            print(f"Erro ao inserir pedido: {e}")
 
     def get_table(self, table):
         try:
