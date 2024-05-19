@@ -149,13 +149,22 @@ class DatabaseManager:
             print(f"Erro ao deletar hambúrguer: {e}")
     
 
-
-
 if __name__ == "__main__":
-    databaseContext = DatabaseManager("teste")
+    databaseContext = DatabaseManager("hamburgueria")
 
-    databaseContext.insert_table_clientes("Gustavo", "Faro", 913528755)
-    rows = databaseContext.get_all_table_clients()
+    # Testando a inserção de um cliente
+    databaseContext.insert_cliente("Gustavo", "Faro", "913528755")
 
+    # Testando a recuperação de clientes por telefone
+    cliente = databaseContext.get_cliente_by_telefone("913528755")
+    print(cliente)
+
+    # Testando a recuperação de clientes por nome
+    clientes = databaseContext.get_cliente_by_nome("Gustavo")
+    for cliente in clientes:
+        print(cliente)
+
+    # Testando a recuperação de todos os clientes
+    rows = databaseContext.get_table("clientes")
     for row in rows:
         print(row)
