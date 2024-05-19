@@ -126,7 +126,7 @@ class DatabaseManager:
                 rows = cursor.fetchall()
                 return rows
         except sqlite3.Error as e:
-            raise Exception(f"Erro ao buscar a tabela Clientes: {str(e)}")
+            print(f"Erro ao buscar a tabela {table}: {e}")
 
     def delete_cliente(self, id_cliente):
         try:
@@ -137,6 +137,16 @@ class DatabaseManager:
                 conn.commit()
         except sqlite3.Error as e:
             print(f"Erro ao deletar cliente: {e}")
+    
+    def delete_hamburguer(self, nome_hamburguer):
+        try:
+            with sqlite3.connect(f"{self.__databasename}.db") as conn:
+                cursor = conn.cursor()
+                sql = "DELETE FROM hamburgueres WHERE nome_hamburguer = ?;"
+                cursor.execute(sql, (nome_hamburguer,))
+                conn.commit()
+        except sqlite3.Error as e:
+            print(f"Erro ao deletar hambúrguer: {e}")
     
 
 
