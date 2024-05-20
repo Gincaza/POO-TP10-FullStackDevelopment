@@ -1,6 +1,7 @@
 import sqlite3
 from datetime import datetime
 
+
 class DatabaseManager:
     @staticmethod
     def create_database(databasename):
@@ -54,7 +55,7 @@ class DatabaseManager:
                 conn.commit()
         except sqlite3.Error as e:
             print(f"Erro ao inserir cliente: {e}")
-    
+
     def get_cliente_by_telefone(self, telefone):
         try:
             with sqlite3.connect(f"{self.__databasename}.db") as conn:
@@ -63,12 +64,13 @@ class DatabaseManager:
                 cursor.execute(sql, (telefone,))
                 result = cursor.fetchone()
                 if result is None:
-                    raise Exception("Nenhum resultado encontrado para o telefone fornecido.")
+                    raise Exception(
+                        "Nenhum resultado encontrado para o telefone fornecido."
+                    )
                 return result
         except sqlite3.Error as e:
             print(f"Erro ao buscar cliente: {e}")
             return None  # Garante que a função retorne um valor
-
 
     def get_cliente_by_nome(self, nome):
         try:
@@ -78,11 +80,13 @@ class DatabaseManager:
                 cursor.execute(sql, (nome,))
                 result = cursor.fetchone()
                 if result is None:
-                    raise Exception("Nenhum resultado encontrado para o cliente fornecido.")
+                    raise Exception(
+                        "Nenhum resultado encontrado para o cliente fornecido."
+                    )
                 return result
         except sqlite3.Error as e:
             print(f"Erro ao buscar cliente: {e}")
-    
+
     def update_cliente(self, id_cliente, nome, morada, telefone):
         try:
             with sqlite3.connect(f"{self.__databasename}.db") as conn:
@@ -108,8 +112,10 @@ class DatabaseManager:
                 conn.commit()
         except sqlite3.Error as e:
             print(f"Erro ao inserir hambúrguer: {e}")
-    
-    def insert_pedido(self, id_cliente, nome_hamburguer, quantidade, tamanho, data_hora, valor_total):
+
+    def insert_pedido(
+        self, id_cliente, nome_hamburguer, quantidade, tamanho, data_hora, valor_total
+    ):
         try:
             with sqlite3.connect(f"{self.__databasename}.db") as conn:
                 cursor = conn.cursor()
@@ -117,7 +123,17 @@ class DatabaseManager:
                     INSERT INTO pedidos (id_cliente, nome_hamburguer, quantidade, tamanho, data_hora, valor_total) 
                     VALUES (?, ?, ?, ?, ?, ?);
                     """
-                cursor.execute(sql, (id_cliente, nome_hamburguer, quantidade, tamanho, data_hora, valor_total))
+                cursor.execute(
+                    sql,
+                    (
+                        id_cliente,
+                        nome_hamburguer,
+                        quantidade,
+                        tamanho,
+                        data_hora,
+                        valor_total,
+                    ),
+                )
                 conn.commit()
         except sqlite3.Error as e:
             print(f"Erro ao inserir pedido: {e}")
@@ -141,7 +157,7 @@ class DatabaseManager:
                 conn.commit()
         except sqlite3.Error as e:
             print(f"Erro ao deletar cliente: {e}")
-    
+
     def delete_hamburguer(self, nome_hamburguer):
         try:
             with sqlite3.connect(f"{self.__databasename}.db") as conn:
@@ -159,8 +175,13 @@ class DatabaseManager:
             self.insert_cliente("Carla", "Coimbra", "913456789")
 
             self.insert_hamburguer("Cheeseburger", "Pão, Carne, Queijo, Alface, Tomate")
-            self.insert_hamburguer("Bacon Burger", "Pão, Carne, Bacon, Queijo, Molho BBQ")
-            self.insert_hamburguer("Veggie Burger", "Pão, Hambúrguer Vegetal, Alface, Tomate, Molho Especial")
+            self.insert_hamburguer(
+                "Bacon Burger", "Pão, Carne, Bacon, Queijo, Molho BBQ"
+            )
+            self.insert_hamburguer(
+                "Veggie Burger",
+                "Pão, Hambúrguer Vegetal, Alface, Tomate, Molho Especial",
+            )
 
             now = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
             self.insert_pedido(1, "Cheeseburger", 2, "normal", now, 12.50)
@@ -170,6 +191,7 @@ class DatabaseManager:
             print("Banco de dados populado com sucesso.")
         except sqlite3.Error as e:
             print(f"Erro ao popular banco de dados: {e}")
+
 
 if __name__ == "__main__":
     databaseContext = DatabaseManager("hamburgueria")
