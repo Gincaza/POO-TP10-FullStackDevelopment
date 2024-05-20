@@ -3,7 +3,7 @@ from databasemanager import DatabaseManager
 
 app = Flask(__name__)
 
-database_context = DatabaseManager("teste")
+database_context = DatabaseManager("webserver")
 
 
 @app.route("/cliente", methods=["GET"])
@@ -85,6 +85,23 @@ def update_client_request():
         ), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 400
+
+@app.route("/hamburguer", methods=["GET"])
+def get_hamburguer_table():
+    try:
+        hamburgueres_rows = database_context.get_table("hamburgueres")
+        rows_data = []
+        for row in hamburgueres_rows:
+            row_data = {
+                "nome_hamburguer": row[0],
+                "ingredientes": row[1],
+            }
+            rows_data.append(row_data)
+        return jsonify(rows_data), 200
+    except Exception as e:
+        print(f"Erro ao obter tabela de hambúrgueres: {e}")
+        return jsonify({"error": str(e)}), 400
+
 
 if __name__ == "__main__":
     database_context.populate_database()
