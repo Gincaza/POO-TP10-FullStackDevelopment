@@ -22,6 +22,21 @@ def get_cliente():
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
+@app.route("/cliente/<username>", methods=["GET"])
+def get_cliente_by_name(username):
+    try:
+        cliente = database_context.get_cliente_by_nome(username)
+        cliente_data = {
+                "id_cliente": cliente[0],
+                "nome": cliente[1],
+                "morada": cliente[2],
+                "telefone": cliente[3]
+            }
+        return jsonify(cliente_data), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
 
 if __name__ == "__main__":
+    database_context.populate_database()
     app.run(debug=True)

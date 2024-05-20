@@ -24,6 +24,16 @@ class FlaskTestCase(unittest.TestCase):
     def test_get_clients_returns_table_clients(self):
         response = self.client.get("/cliente")
         self.assertEqual(response.status_code, 200)
+    
+    def test_get_cliente_by_name(self):
+        response = self.client.get('/cliente/Ana')  # Supondo que 'Gustavo' seja um nome de cliente existente
+        data = response.get_json()
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('id_cliente', data)
+        self.assertIn('nome', data)
+        self.assertIn('morada', data)
+        self.assertIn('telefone', data)
 
 if __name__ == "__main__":
     unittest.main()
