@@ -59,6 +59,33 @@ def get_cliente_telefone(telefone):
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
+@app.route("/cliente", methods=["PUT"])
+def update_client_request():
+    data = request.json
+    request_id_cliente = data.get("id_cliente")
+    request_nome = data.get("nome")
+    request_morada = data.get("morada")
+    request_telefone = data.get("telefone")
+
+    try:
+        database_context.update_cliente(request_id_cliente, request_nome, request_morada, request_telefone)
+        updated_cliente_check = database_context.get_cliente_by_nome(request_nome)
+
+        cliente_data = {
+                "id_cliente": updated_cliente_check[0],
+                "nome": updated_cliente_check[1],
+                "morada": updated_cliente_check[2],
+                "telefone": updated_cliente_check[3],
+            }
+        return jsonify(
+            {
+                "message": "Cliente atualizado com sucesso",
+                "data": cliente_data
+            }
+        ), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
 if __name__ == "__main__":
     database_context.populate_database()
     app.run(debug=True)

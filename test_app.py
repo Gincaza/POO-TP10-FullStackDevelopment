@@ -44,6 +44,34 @@ class FlaskTestCase(unittest.TestCase):
         self.assertIn('nome', data)
         self.assertIn('morada', data)
         self.assertIn('telefone', data)
+    
+    def test_update_client_request(self):
+        # Dados de exemplo para atualização do cliente
+        data = {
+            "id_cliente": 1,
+            "nome": "Novo Nome",
+            "morada": "Nova Morada",
+            "telefone": "911234567"
+        }
+        
+        # Envia uma solicitação PUT para atualizar o cliente
+        response = self.app.put('/cliente', json=data)
+        data = response.get_json()
+        
+        # Verifica se o status code é 200 (OK) e se a mensagem de sucesso está presente
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('message', data)
+        self.assertEqual(data['message'], 'Cliente atualizado com sucesso')
+
+        # Verifica se os dados do cliente foram atualizados corretamente
+        self.assertIn('data', data)
+        self.assertIn('id_cliente', data['data'])
+        self.assertIn('nome', data['data'])
+        self.assertIn('morada', data['data'])
+        self.assertIn('telefone', data['data'])
+        self.assertEqual(data['data']['nome'], 'Novo Nome')
+        self.assertEqual(data['data']['morada'], 'Nova Morada')
+        self.assertEqual(data['data']['telefone'], '911234567')
 
 if __name__ == "__main__":
     unittest.main()
