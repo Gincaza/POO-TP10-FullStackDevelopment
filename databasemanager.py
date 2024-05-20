@@ -67,6 +67,8 @@ class DatabaseManager:
                 return result
         except sqlite3.Error as e:
             print(f"Erro ao buscar cliente: {e}")
+            return None  # Garante que a função retorne um valor
+
 
     def get_cliente_by_nome(self, nome):
         try:
@@ -75,6 +77,8 @@ class DatabaseManager:
                 sql = "SELECT * FROM clientes WHERE nome = ?;"
                 cursor.execute(sql, (nome,))
                 result = cursor.fetchone()
+                if result is None:
+                    raise Exception("Nenhum resultado encontrado para o cliente fornecido.")
                 return result
         except sqlite3.Error as e:
             print(f"Erro ao buscar cliente: {e}")
@@ -187,3 +191,5 @@ if __name__ == "__main__":
     rows = databaseContext.get_table("pedidos")
     for row in rows:
         print(row)
+
+    print(f"Aqui está: {databaseContext.get_cliente_by_telefone(911234567)}")
