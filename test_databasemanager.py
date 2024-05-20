@@ -1,5 +1,4 @@
 import unittest
-import os
 import sqlite3
 from databasemanager import DatabaseManager
 

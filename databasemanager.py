@@ -1,5 +1,5 @@
 import sqlite3
-import os
+from datetime import datetime
 
 class DatabaseManager:
     @staticmethod
@@ -147,24 +147,43 @@ class DatabaseManager:
                 conn.commit()
         except sqlite3.Error as e:
             print(f"Erro ao deletar hambúrguer: {e}")
-    
+
+    def populate_database(self):
+        try:
+            self.insert_cliente("Ana", "Lisboa", "911234567")
+            self.insert_cliente("Bruno", "Porto", "912345678")
+            self.insert_cliente("Carla", "Coimbra", "913456789")
+
+            self.insert_hamburguer("Cheeseburger", "Pão, Carne, Queijo, Alface, Tomate")
+            self.insert_hamburguer("Bacon Burger", "Pão, Carne, Bacon, Queijo, Molho BBQ")
+            self.insert_hamburguer("Veggie Burger", "Pão, Hambúrguer Vegetal, Alface, Tomate, Molho Especial")
+
+            now = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
+            self.insert_pedido(1, "Cheeseburger", 2, "normal", now, 12.50)
+            self.insert_pedido(2, "Bacon Burger", 1, "duplo", now, 8.75)
+            self.insert_pedido(3, "Veggie Burger", 3, "normal", now, 15.00)
+
+            print("Banco de dados populado com sucesso.")
+        except sqlite3.Error as e:
+            print(f"Erro ao popular banco de dados: {e}")
 
 if __name__ == "__main__":
     databaseContext = DatabaseManager("hamburgueria")
 
-    # Testando a inserção de um cliente
-    databaseContext.insert_cliente("Gustavo", "Faro", "913528755")
-
-    # Testando a recuperação de clientes por telefone
-    cliente = databaseContext.get_cliente_by_telefone("913528755")
-    print(cliente)
-
-    # Testando a recuperação de clientes por nome
-    clientes = databaseContext.get_cliente_by_nome("Gustavo")
-    for cliente in clientes:
-        print(cliente)
+    # Populando o banco de dados
+    databaseContext.populate_database()
 
     # Testando a recuperação de todos os clientes
     rows = databaseContext.get_table("clientes")
+    for row in rows:
+        print(row)
+
+    # Testando a recuperação de todos os hambúrgueres
+    rows = databaseContext.get_table("hamburgueres")
+    for row in rows:
+        print(row)
+
+    # Testando a recuperação de todos os pedidos
+    rows = databaseContext.get_table("pedidos")
     for row in rows:
         print(row)
