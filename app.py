@@ -59,48 +59,75 @@ def get_cliente_telefone(telefone):
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
+
 @app.route("/cliente", methods=["PUT"])
-def update_client_request():
-    data = request.json
-    request_id_cliente = data.get("id_cliente")
-    request_nome = data.get("nome")
-    request_morada = data.get("morada")
-    request_telefone = data.get("telefone")
+def atualizar_cliente():
+    dados = request.json
+    id_cliente = dados.get("id_cliente")
+    nome = dados.get("nome")
+    morada = dados.get("morada")
+    telefone = dados.get("telefone")
 
     try:
-        database_context.update_cliente(request_id_cliente, request_nome, request_morada, request_telefone)
-        updated_cliente_check = database_context.get_cliente_by_nome(request_nome)
+        database_context.update_cliente(id_cliente, nome, morada, telefone)
+        cliente_atualizado = database_context.get_cliente(nome, telefone)
 
-        cliente_data = {
-                "id_cliente": updated_cliente_check[0],
-                "nome": updated_cliente_check[1],
-                "morada": updated_cliente_check[2],
-                "telefone": updated_cliente_check[3],
-            }
+        dados_cliente = {
+            "id_cliente": cliente_atualizado[0],
+            "nome": cliente_atualizado[1],
+            "morada": cliente_atualizado[2],
+            "telefone": cliente_atualizado[3],
+        }
         return jsonify(
-            {
-                "message": "Cliente atualizado com sucesso",
-                "data": cliente_data
-            }
+            {"mensagem": "Cliente atualizado com sucesso", "dados": dados_cliente}
         ), 201
     except Exception as e:
-        return jsonify({"error": str(e)}), 400
+        return jsonify({"erro": str(e)}), 400
+
+
+
+@app.route("/cliente", methods=["POST"])
+def inserir_cliente():
+    dados = request.json
+    nome = dados.get("nome")
+    morada = dados.get("morada")
+    telefone = dados.get("telefone")
+
+    try:
+        database_context.insert_cliente(nome, morada, telefone)
+        cliente_verificado = database_context.get_cliente(nome, telefone)
+
+        dados_cliente = {
+            "id_cliente": cliente_verificado[0],
+            "nome": cliente_verificado[1],
+            "morada": cliente_verificado[2],
+            "telefone": cliente_verificado[3],
+        }
+        return jsonify(
+            {"mensagem": "Cliente criado com sucesso!", "dados": dados_cliente}
+        )
+    except Exception as e:
+        return jsonify({"erro": str(e)})
+
 
 @app.route("/hamburguer", methods=["GET"])
-def get_hamburguer_table():
+def obter_tabela_hamburguer():
     try:
-        hamburgueres_rows = database_context.get_table("hamburgueres")
-        rows_data = []
-        for row in hamburgueres_rows:
-            row_data = {
-                "nome_hamburguer": row[0],
-                "ingredientes": row[1],
+        linhas_hamburgueres = database_context.get_table("hamburgueres")
+        dados_linhas = []
+
+        for linha in linhas_hamburgueres:
+            dados_linha = {
+                "nome_hamburguer": linha[0],
+                "ingredientes": linha[1],
             }
-            rows_data.append(row_data)
-        return jsonify(rows_data), 200
+            dados_linhas.append(dados_linha)
+
+        return jsonify(dados_linhas), 200
     except Exception as e:
         print(f"Erro ao obter tabela de hambúrgueres: {e}")
-        return jsonify({"error": str(e)}), 400
+        return jsonify({"erro": str(e)}), 400
+
 
 
 if __name__ == "__main__":
