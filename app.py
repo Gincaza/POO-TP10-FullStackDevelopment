@@ -104,5 +104,4 @@ def get_hamburguer_table():
 
 
 if __name__ == "__main__":
-    database_context.populate_database()
     app.run(debug=True)
