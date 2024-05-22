@@ -125,15 +125,19 @@ def deletar_cliente():
             id_cliente=cliente_id, nome=nome, telefone=telefone
         )
 
-        dados_cliente = {
-            "id_cliente": cliente_verificado[0],
-            "nome": cliente_verificado[1],
-            "morada": cliente_verificado[2],
-            "telefone": cliente_verificado[3],
-        }
-        return jsonify(
-            {"mensagem": "Cliente deletado com sucesso!", "dados": dados_cliente}
-        ), 201
+        if cliente_verificado:
+            database_context.delete_cliente(cliente_id)
+            dados_cliente = {
+                "id_cliente": cliente_verificado[0],
+                "nome": cliente_verificado[1],
+                "morada": cliente_verificado[2],
+                "telefone": cliente_verificado[3],
+            }
+            return jsonify(
+                {"mensagem": "Cliente deletado com sucesso!", "dados": dados_cliente}
+            ), 201
+        else:
+            return jsonify({"erro": "Cliente não encontrado"}), 404
     except Exception as e:
         return jsonify({"erro": str(e)}), 400
 
@@ -191,13 +195,17 @@ def deletar_hamburguer():
             nome_hamburguer=nome_hamburguer
         )
 
-        dados_hamburguer = {
-            "nome_hamburguer": hamburguer_verificado[0],
-            "ingredientes": hamburguer_verificado[1],
-        }
-        return jsonify(
-            {"mensagem": "Hamburguer deletado com sucesso!", "dados": dados_hamburguer}
-        ), 201
+        if hamburguer_verificado:
+            database_context.delete_hamburguer(nome_hamburguer)
+            dados_hamburguer = {
+                "nome_hamburguer": hamburguer_verificado[0],
+                "ingredientes": hamburguer_verificado[1],
+            }
+            return jsonify(
+                {"mensagem": "Hamburguer deletado com sucesso!", "dados": dados_hamburguer}
+            ), 201
+        else:
+            return jsonify({"erro": "Hamburguer não encontrado"}), 404
     except Exception as e:
         return jsonify({"erro": str(e)}), 400
 
