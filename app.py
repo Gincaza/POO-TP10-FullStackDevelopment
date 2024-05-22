@@ -3,8 +3,7 @@ from databasemanager import DatabaseManager
 
 app = Flask(__name__)
 
-database_context = DatabaseManager("webserver")
-
+database_context = DatabaseManager("hamburgueria")
 
 @app.route("/cliente", methods=["GET"])
 def obter_clientes():
@@ -25,13 +24,12 @@ def obter_clientes():
     except Exception as e:
         return jsonify({"erro": str(e)}), 400
 
-
-@app.route("/cliente/<username>", methods=["GET"])
+@app.route("/cliente/nome/<username>", methods=["GET"])
 def obter_cliente_por_nome(username):
     try:
-        cliente = database_context.get_cliente_by_nome(username)
+        cliente = database_context.get_cliente(nome=username)
 
-        if cliente is not None:
+        if cliente:
             cliente_data = {
                 "id_cliente": cliente[0],
                 "nome": cliente[1],
@@ -44,13 +42,12 @@ def obter_cliente_por_nome(username):
     except Exception as e:
         return jsonify({"erro": str(e)}), 400
 
-
-@app.route("/cliente/<int:telefone>", methods=["GET"])
+@app.route("/cliente/telefone/<int:telefone>", methods=["GET"])
 def obter_cliente_por_telefone(telefone):
     try:
-        cliente = database_context.get_cliente_by_telefone(telefone)
+        cliente = database_context.get_cliente(telefone=str(telefone))
 
-        if cliente is not None:
+        if (cliente):
             cliente_data = {
                 "id_cliente": cliente[0],
                 "nome": cliente[1],
@@ -62,7 +59,6 @@ def obter_cliente_por_telefone(telefone):
             return jsonify({"erro": "Cliente não encontrado"}), 404
     except Exception as e:
         return jsonify({"erro": str(e)}), 400
-
 
 @app.route("/cliente", methods=["PUT"])
 def atualizar_cliente():
@@ -74,7 +70,7 @@ def atualizar_cliente():
 
     try:
         database_context.update_cliente(id_cliente, nome, morada, telefone)
-        cliente_atualizado = database_context.get_cliente(nome, telefone)
+        cliente_atualizado = database_context.get_cliente(nome=nome, telefone=telefone)
 
         dados_cliente = {
             "id_cliente": cliente_atualizado[0],
@@ -88,7 +84,6 @@ def atualizar_cliente():
     except Exception as e:
         return jsonify({"erro": str(e)}), 400
 
-
 @app.route("/cliente", methods=["POST"])
 def inserir_cliente():
     dados = request.json
@@ -98,7 +93,7 @@ def inserir_cliente():
 
     try:
         database_context.insert_cliente(nome, morada, telefone)
-        cliente_verificado = database_context.get_cliente(nome, telefone)
+        cliente_verificado = database_context.get_cliente(nome=nome, telefone=telefone)
 
         dados_cliente = {
             "id_cliente": cliente_verificado[0],
@@ -108,17 +103,15 @@ def inserir_cliente():
         }
         return jsonify(
             {"mensagem": "Cliente criado com sucesso!", "dados": dados_cliente}
-        )
+        ), 201
     except Exception as e:
-        return jsonify({"erro": str(e)})
-
+        return jsonify({"erro": str(e)}), 400
 
 @app.route("/hamburguer", methods=["GET"])
 def obter_tabela_hamburguer():
     try:
         linhas_hamburgueres = database_context.get_table("hamburgueres")
         dados_linhas = []
-
         for linha in linhas_hamburgueres:
             dados_linha = {
                 "nome_hamburguer": linha[0],
@@ -130,7 +123,6 @@ def obter_tabela_hamburguer():
     except Exception as e:
         print(f"Erro ao obter tabela de hambúrgueres: {e}")
         return jsonify({"erro": str(e)}), 400
-
 
 if __name__ == "__main__":
     app.run(debug=True)
