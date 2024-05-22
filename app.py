@@ -3,7 +3,7 @@ from flask_jwt_extended import JWTManager, create_access_token, jwt_required
 from databasemanager import DatabaseManager
 
 app = Flask(__name__)
-app.config['JWT_SECRET_KEY'] = "secretkey"
+app.config["JWT_SECRET_KEY"] = "secretkey"
 jwt = JWTManager(app)
 
 database_context = DatabaseManager("hamburgueria")
@@ -239,7 +239,9 @@ def login():
 
         if verify_user:
             access_token = create_access_token(identity=username)
-            return jsonify({"message": "Usuário autenticado!", "access_token": access_token}), 200
+            return jsonify(
+                {"message": "Usuário autenticado!", "access_token": access_token}
+            ), 200
         else:
             return jsonify({"message": "Não conseguiu se logar!"}), 400
     except Exception as e:
