@@ -84,12 +84,8 @@ class DatabaseManager:
                         return result
                     else:
                         raise Exception("Nenhum resultado encontrado para o cliente")
-        except Exception as e:
-            raise e
-
-
         except sqlite3.Error as e:
-            print(f"Erro ao buscar cliente: {e}")
+            return str(e)
 
     def update_cliente(self, id_cliente, nome, morada, telefone):
         try:
