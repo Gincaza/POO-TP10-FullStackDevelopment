@@ -146,5 +146,25 @@ def obter_tabela_hamburguer():
         print(f"Erro ao obter tabela de hambúrgueres: {e}")
         return jsonify({"erro": str(e)}), 400
 
+@app.route("/hamburguer", methods=["POST"])
+def inserir_hamburguer():
+    dados = request.json
+    nome_hamburguer = dados.get("nome_hamburguer")
+    ingredientes = dados.get("ingredientes")
+
+    try:
+        database_context.insert_hamburguer(nome_hamburguer=nome_hamburguer, ingredientes=ingredientes)
+        hamburguer_verificado = database_context.get_hamburguer(nome_hamburguer=nome_hamburguer, ingredientes=ingredientes)
+
+        dados_hamburguer = {
+            "nome_hamburguer": hamburguer_verificado[0],
+            "ingredientes": hamburguer_verificado[1],
+        }
+        return jsonify(
+            {"message": "Hamburguer inserido com sucesso!", "dados": dados_hamburguer}
+        ), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
 if __name__ == "__main__":
     app.run(debug=True)
