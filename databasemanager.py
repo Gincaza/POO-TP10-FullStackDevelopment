@@ -1,6 +1,8 @@
 import sqlite3
 from datetime import datetime
 from contextlib import closing
+import bcrypt
+
 
 class DatabaseManager:
     @staticmethod
@@ -34,15 +36,50 @@ class DatabaseManager:
                         FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente),
                         FOREIGN KEY (nome_hamburguer) REFERENCES hamburgueres(nome_hamburguer)
                     );
+
+                    CREATE TABLE IF NOT EXISTS 
+                    empregados (
+                        id_empregado INTEGER PRIMARY KEY,
+                        nome TEXT,
+                        username TEXT UNIQUE,
+                        senha TEXT
+                    );
                     """
                 with closing(conn.cursor()) as cursor:
                     cursor.executescript(sql)
         except sqlite3.Error as e:
             return str(e)
 
-    def __init__(self, databasename) -> None:
+    def __init__(self, databasename):
         self.__databasename = databasename
         self.create_database(databasename)
+
+    def insert_empregado(self, nome, username, senha):
+        hashed_senha = bcrypt.hashpw(senha.encode("utf-8"), bcrypt.gensalt())
+        try:
+            with sqlite3.connect(f"{self.__databasename}.db") as conn:
+                sql = """
+                    INSERT INTO empregados (nome, username, senha) VALUES (?, ?, ?);
+                    """
+                with closing(conn.cursor()) as cursor:
+                    cursor.execute(sql, (nome, username, hashed_senha))
+                conn.commit()
+        except sqlite3.Error as e:
+            return str(e)
+
+    def verify_empregado(self, username, senha):
+        try:
+            with sqlite3.connect(f"{self.__databasename}.db") as conn:
+                sql = "SELECT senha FROM empregados WHERE username = ?"
+                with closing(conn.cursor()) as cursor:
+                    cursor.execute(sql, (username,))
+                    result = cursor.fetchone()
+                    if result and bcrypt.checkpw(senha.encode("utf-8"), result[0]):
+                        return True
+                    else:
+                        return False
+        except sqlite3.Error as e:
+            return str(e)
 
     def insert_cliente(self, nome, morada, telefone):
         try:
@@ -86,12 +123,14 @@ class DatabaseManager:
                         raise Exception("Nenhum resultado encontrado para o cliente")
         except sqlite3.Error as e:
             return str(e)
-    
+
     def get_hamburguer(self, nome_hamburguer=None, ingredientes=None):
         try:
             if not nome_hamburguer and not ingredientes:
-                raise ValueError("Pelo menos um critério de busca (nome_hamburguer ou ingredientes)")
-            
+                raise ValueError(
+                    "Pelo menos um critério de busca (nome_hamburguer ou ingredientes)"
+                )
+
             with sqlite3.connect(f"{self.__databasename}.db") as conn:
                 with closing(conn.cursor()) as cursor:
                     if nome_hamburguer:
@@ -104,15 +143,16 @@ class DatabaseManager:
                         query = "SELECT * FROM hamburgueres WHERE nome_hamburguer = ? AND ingredientes = ?"
                         cursor.execute(query, (nome_hamburguer, ingredientes))
 
-                    result = cursor.fetchone() 
+                    result = cursor.fetchone()
 
                     if result:
                         return result
                     else:
-                        raise Exception("Nenhum resultado encontrado para o hamburguer fornecido.")
+                        raise Exception(
+                            "Nenhum resultado encontrado para o hamburguer fornecido."
+                        )
         except sqlite3.Error as e:
-            return str(e)    
-                
+            return str(e)
 
     def update_cliente(self, id_cliente, nome, morada, telefone):
         try:
@@ -141,7 +181,13 @@ class DatabaseManager:
             return str(e)
 
     def insert_pedido(
-        self, id_cliente, nome_hamburguer, quantidade, tamanho, valor_total, data_hora=None
+        self,
+        id_cliente,
+        nome_hamburguer,
+        quantidade,
+        tamanho,
+        valor_total,
+        data_hora=None,
     ):
         try:
             with sqlite3.connect(f"{self.__databasename}.db") as conn:
@@ -157,7 +203,9 @@ class DatabaseManager:
                             nome_hamburguer,
                             quantidade,
                             tamanho,
-                            data_hora if data_hora else datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                            data_hora
+                            if data_hora
+                            else datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                             valor_total,
                         ),
                     )
@@ -215,9 +263,11 @@ class DatabaseManager:
             self.insert_pedido(2, "Bacon Burger", 1, "duplo", 8.75, now)
             self.insert_pedido(3, "Veggie Burger", 3, "normal", 15.00, now)
 
+            self.insert_empregado("Gustavo Cruz", "mothnue", "password123!")
             print("Banco de dados populado com sucesso.")
         except sqlite3.Error as e:
             return str(e)
+
 
 if __name__ == "__main__":
     databaseContext = DatabaseManager("hamburgueria")
