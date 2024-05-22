@@ -107,6 +107,28 @@ def inserir_cliente():
     except Exception as e:
         return jsonify({"erro": str(e)}), 400
 
+@app.route("/cliente", methods=["DELETE"])
+def deletar_cliente():
+    dados = request.json
+    cliente_id = dados.get("cliente_id")
+    nome = dados.get("nome")
+    telefone = dados.get("telefone")
+
+    try:
+        cliente_verificado = database_context.get_cliente(id_cliente=cliente_id, nome=nome, telefone=telefone)
+
+        dados_cliente = {
+            "id_cliente": cliente_verificado[0],
+            "nome": cliente_verificado[1],
+            "morada": cliente_verificado[2],
+            "telefone": cliente_verificado[3],
+        }
+        return jsonify(
+            {"mensagem": "Cliente deletado com sucesso!", "dados": dados_cliente}
+        ), 201
+    except Exception as e:
+        return jsonify({"erro": str(e)}), 400
+
 @app.route("/hamburguer", methods=["GET"])
 def obter_tabela_hamburguer():
     try:
