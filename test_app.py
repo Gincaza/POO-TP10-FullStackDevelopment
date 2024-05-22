@@ -62,10 +62,19 @@ class TestAPIRoutes(unittest.TestCase):
         # setUp
         dados = {"username": "mothnue", "senha": "password123!"}
         # act
-        response = self.client.post("login", json=dados)
+        response = self.client.post("/login", json=dados)
         # assert
         self.assertEqual(200, response.status_code)
         self.assertIn("Usuário autenticado!", response.json["message"])
+
+    def test_register(self):
+        # set Up
+        dados = {"nome": "Pedro", "username": "joker", "senha": "password123"}
+        # act
+        response = self.client.post("/register", json=dados)
+        # assert
+        self.assertEqual(201, response.status_code)
+        self.assertIn("Registrado com sucesso!", response.json["message"])
 
 
 if __name__ == "__main__":

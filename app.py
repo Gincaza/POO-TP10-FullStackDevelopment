@@ -202,7 +202,10 @@ def deletar_hamburguer():
                 "ingredientes": hamburguer_verificado[1],
             }
             return jsonify(
-                {"mensagem": "Hamburguer deletado com sucesso!", "dados": dados_hamburguer}
+                {
+                    "mensagem": "Hamburguer deletado com sucesso!",
+                    "dados": dados_hamburguer,
+                }
             ), 201
         else:
             return jsonify({"erro": "Hamburguer não encontrado"}), 404
@@ -216,6 +219,9 @@ def login():
     username = dados.get("username")
     senha = dados.get("senha")
 
+    if not all([username, senha]):
+        return jsonify({"erro": "Username e senha são obrigatórios"}), 400
+
     try:
         verify_user = database_context.verify_empregado(username=username, senha=senha)
 
@@ -223,6 +229,29 @@ def login():
             return jsonify({"message": "Usuário autenticado!"}), 200
         else:
             return jsonify({"message": "Não conseguiu se logar!"}), 400
+    except Exception as e:
+        return jsonify({"erro": str(e)}), 500
+
+
+@app.route("/register", methods=["POST"])
+def register():
+    dados = request.json
+    nome = dados.get("nome")
+    username = dados.get("username")
+    senha = dados.get("senha")
+
+    if not all([nome, username, senha]):
+        return jsonify({"erro": "Nome, username e senha são obrigatórios"}), 400
+
+    try:
+        database_context.insert_empregado(nome=nome, username=username, senha=senha)
+
+        verify_user = database_context.verify_empregado(username=username, senha=senha)
+
+        if verify_user:
+            return jsonify({"message": "Registrado com sucesso!"}), 201
+        else:
+            return jsonify({"erro": "Erro durante o registro. Tente novamente."}), 500
     except Exception as e:
         return jsonify({"erro": str(e)}), 500
 
