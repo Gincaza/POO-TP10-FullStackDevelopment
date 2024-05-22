@@ -56,16 +56,19 @@ class DatabaseManager:
         except sqlite3.Error as e:
             print(f"Erro ao inserir cliente: {e}")
 
-    def get_cliente(self, nome=None, telefone=None):
+    def get_cliente(self, id_cliente=None, nome=None, telefone=None):
         try:
-            if not nome and not telefone:
+            if not id_cliente and not nome and not telefone:
                 raise ValueError(
-                    "Pelo menos um critério de busca (nome ou telefone) deve ser fornecido"
+                    "Pelo menos um critério de busca (id_cliente, nome ou telefone) deve ser fornecido"
                 )
 
             with sqlite3.connect(f"{self.__databasename}.db") as conn:
                 with closing(conn.cursor()) as cursor:
-                    if nome and telefone:
+                    if id_cliente:
+                        query = "SELECT * FROM clientes WHERE id_cliente = ?"
+                        cursor.execute(query, (id_cliente,))
+                    elif nome and telefone:
                         query = "SELECT * FROM clientes WHERE nome = ? AND telefone = ?"
                         cursor.execute(query, (nome, telefone))
                     elif nome:
@@ -81,6 +84,9 @@ class DatabaseManager:
                         return result
                     else:
                         raise Exception("Nenhum resultado encontrado para o cliente")
+        except Exception as e:
+            raise e
+
 
         except sqlite3.Error as e:
             print(f"Erro ao buscar cliente: {e}")
