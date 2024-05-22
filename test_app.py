@@ -17,7 +17,7 @@ class TestAPIRoutes(unittest.TestCase):
         self.assertIsInstance(data, list)
 
     def test_get_cliente_by_name(self):
-        response = self.client.get('/cliente/Ana')
+        response = self.client.get('/cliente/nome/Ana')
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.data)
         self.assertIsInstance(data, dict)
@@ -27,7 +27,7 @@ class TestAPIRoutes(unittest.TestCase):
         self.assertIn('telefone', data)
 
     def test_get_cliente_by_telefone(self):
-        response = self.client.get('/cliente/911234567')
+        response = self.client.get('/cliente/telefone/911234567')
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.data)
         self.assertIsInstance(data, dict)
