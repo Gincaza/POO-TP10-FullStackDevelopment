@@ -210,5 +210,3 @@ if __name__ == "__main__":
     rows = databaseContext.get_table("pedidos")
     for row in rows:
         print(row)
-
-    print(f"Aqui está: {databaseContext.get_cliente_by_telefone('911234567')}")
