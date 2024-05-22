@@ -166,5 +166,23 @@ def inserir_hamburguer():
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
+@app.route("/hamburguer", methods=["DELETE"])
+def deletar_hamburguer():
+    dados = request.json
+    nome_hamburguer = dados.get("nome_hamburguer")
+
+    try:
+        hamburguer_verificado = database_context.get_hamburguer(nome_hamburguer=nome_hamburguer)
+
+        dados_hamburguer = {
+            "nome_hamburguer": hamburguer_verificado[0],
+            "ingredientes": hamburguer_verificado[1],
+        }
+        return jsonify(
+            {"mensagem": "Hamburguer deletado com sucesso!", "dados": dados_hamburguer}
+        ), 201
+    except Exception as e:
+        return jsonify({"erro": str(e)}), 400
+
 if __name__ == "__main__":
     app.run(debug=True)
