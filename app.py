@@ -5,6 +5,7 @@ app = Flask(__name__)
 
 database_context = DatabaseManager("hamburgueria")
 
+
 @app.route("/cliente", methods=["GET"])
 def obter_clientes():
     try:
@@ -24,6 +25,7 @@ def obter_clientes():
     except Exception as e:
         return jsonify({"erro": str(e)}), 400
 
+
 @app.route("/cliente/nome/<username>", methods=["GET"])
 def obter_cliente_por_nome(username):
     try:
@@ -42,12 +44,13 @@ def obter_cliente_por_nome(username):
     except Exception as e:
         return jsonify({"erro": str(e)}), 400
 
+
 @app.route("/cliente/telefone/<int:telefone>", methods=["GET"])
 def obter_cliente_por_telefone(telefone):
     try:
         cliente = database_context.get_cliente(telefone=str(telefone))
 
-        if (cliente):
+        if cliente:
             cliente_data = {
                 "id_cliente": cliente[0],
                 "nome": cliente[1],
@@ -59,6 +62,7 @@ def obter_cliente_por_telefone(telefone):
             return jsonify({"erro": "Cliente não encontrado"}), 404
     except Exception as e:
         return jsonify({"erro": str(e)}), 400
+
 
 @app.route("/cliente", methods=["PUT"])
 def atualizar_cliente():
@@ -84,6 +88,7 @@ def atualizar_cliente():
     except Exception as e:
         return jsonify({"erro": str(e)}), 400
 
+
 @app.route("/cliente", methods=["POST"])
 def inserir_cliente():
     dados = request.json
@@ -107,6 +112,7 @@ def inserir_cliente():
     except Exception as e:
         return jsonify({"erro": str(e)}), 400
 
+
 @app.route("/cliente", methods=["DELETE"])
 def deletar_cliente():
     dados = request.json
@@ -115,7 +121,9 @@ def deletar_cliente():
     telefone = dados.get("telefone")
 
     try:
-        cliente_verificado = database_context.get_cliente(id_cliente=cliente_id, nome=nome, telefone=telefone)
+        cliente_verificado = database_context.get_cliente(
+            id_cliente=cliente_id, nome=nome, telefone=telefone
+        )
 
         dados_cliente = {
             "id_cliente": cliente_verificado[0],
@@ -128,6 +136,7 @@ def deletar_cliente():
         ), 201
     except Exception as e:
         return jsonify({"erro": str(e)}), 400
+
 
 @app.route("/hamburguer", methods=["GET"])
 def obter_tabela_hamburguer():
@@ -146,6 +155,7 @@ def obter_tabela_hamburguer():
         print(f"Erro ao obter tabela de hambúrgueres: {e}")
         return jsonify({"erro": str(e)}), 400
 
+
 @app.route("/hamburguer", methods=["POST"])
 def inserir_hamburguer():
     dados = request.json
@@ -153,8 +163,12 @@ def inserir_hamburguer():
     ingredientes = dados.get("ingredientes")
 
     try:
-        database_context.insert_hamburguer(nome_hamburguer=nome_hamburguer, ingredientes=ingredientes)
-        hamburguer_verificado = database_context.get_hamburguer(nome_hamburguer=nome_hamburguer, ingredientes=ingredientes)
+        database_context.insert_hamburguer(
+            nome_hamburguer=nome_hamburguer, ingredientes=ingredientes
+        )
+        hamburguer_verificado = database_context.get_hamburguer(
+            nome_hamburguer=nome_hamburguer, ingredientes=ingredientes
+        )
 
         dados_hamburguer = {
             "nome_hamburguer": hamburguer_verificado[0],
@@ -166,13 +180,16 @@ def inserir_hamburguer():
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
+
 @app.route("/hamburguer", methods=["DELETE"])
 def deletar_hamburguer():
     dados = request.json
     nome_hamburguer = dados.get("nome_hamburguer")
 
     try:
-        hamburguer_verificado = database_context.get_hamburguer(nome_hamburguer=nome_hamburguer)
+        hamburguer_verificado = database_context.get_hamburguer(
+            nome_hamburguer=nome_hamburguer
+        )
 
         dados_hamburguer = {
             "nome_hamburguer": hamburguer_verificado[0],
@@ -183,6 +200,24 @@ def deletar_hamburguer():
         ), 201
     except Exception as e:
         return jsonify({"erro": str(e)}), 400
+
+
+@app.route("/login", methods=["POST"])
+def login():
+    dados = request.json
+    username = dados.get("username")
+    senha = dados.get("senha")
+
+    try:
+        verify_user = database_context.verify_empregado(username=username, senha=senha)
+
+        if verify_user:
+            return jsonify({"message": "Usuário autenticado!"}), 200
+        else:
+            return jsonify({"message": "Não conseguiu se logar!"}), 400
+    except Exception as e:
+        return jsonify({"erro": str(e)}), 500
+
 
 if __name__ == "__main__":
     app.run(debug=True)

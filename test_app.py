@@ -43,21 +43,29 @@ class TestAPIRoutes(unittest.TestCase):
         self.assertIsInstance(data, list)
 
     def test_inserir_hamburguer(self):
+        # setUp
         dados = {
             "nome_hamburguer": "CheeseGood",
             "ingredientes": "queijo molho especial",
         }
+        # act
         request = self.client.post("/hamburguer", json=dados)
-
+        # assert
         self.assertEqual(request.status_code, 201)
-
-        # Verifica se a resposta contém a mensagem esperada
         self.assertIn("Hamburguer inserido com sucesso!", request.json["message"])
-
-        # Verifica se os dados do cliente inserido estão corretos
+        # assert se os dados estão corretos
         dados_cliente = request.json["dados"]
         self.assertEqual(dados_cliente["nome_hamburguer"], dados["nome_hamburguer"])
         self.assertEqual(dados_cliente["ingredientes"], dados["ingredientes"])
+
+    def test_login(self):
+        # setUp
+        dados = {"username": "mothnue", "senha": "password123!"}
+        # act
+        response = self.client.post("login", json=dados)
+        # assert
+        self.assertEqual(200, response.status_code)
+        self.assertIn("Usuário autenticado!", response.json["message"])
 
 
 if __name__ == "__main__":
