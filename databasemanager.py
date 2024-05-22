@@ -38,7 +38,7 @@ class DatabaseManager:
                 with closing(conn.cursor()) as cursor:
                     cursor.executescript(sql)
         except sqlite3.Error as e:
-            print(f"Ocorreu um erro ao criar o banco de dados: {e}")
+            return str(e)
 
     def __init__(self, databasename) -> None:
         self.__databasename = databasename
@@ -54,7 +54,7 @@ class DatabaseManager:
                     cursor.execute(sql, (nome, morada, telefone))
                 conn.commit()
         except sqlite3.Error as e:
-            print(f"Erro ao inserir cliente: {e}")
+            return str(e)
 
     def get_cliente(self, id_cliente=None, nome=None, telefone=None):
         try:
@@ -86,6 +86,33 @@ class DatabaseManager:
                         raise Exception("Nenhum resultado encontrado para o cliente")
         except sqlite3.Error as e:
             return str(e)
+    
+    def get_hamburguer(self, nome_hamburguer=None, ingredientes=None):
+        try:
+            if not nome_hamburguer and not ingredientes:
+                raise ValueError("Pelo menos um critério de busca (nome_hamburguer ou ingredientes)")
+            
+            with sqlite3.connect(f"{self.__databasename}.db") as conn:
+                with closing(conn.cursor()) as cursor:
+                    if nome_hamburguer:
+                        query = "SELECT * FROM hamburgueres WHERE nome_hamburguer = ?"
+                        cursor.execute(query, (nome_hamburguer,))
+                    elif ingredientes:
+                        query = "SELECT * FROM hamburgueres WHERE ingredientes = ?"
+                        cursor.execute(query, (ingredientes,))
+                    else:
+                        query = "SELECT * FROM hamburgueres WHERE nome_hamburguer = ? AND ingredientes = ?"
+                        cursor.execute(query, (nome_hamburguer, ingredientes))
+
+                    result = cursor.fetchone() 
+
+                    if result:
+                        return result
+                    else:
+                        raise Exception("Nenhum resultado encontrado para o hamburguer fornecido.")
+        except sqlite3.Error as e:
+            return str(e)    
+                
 
     def update_cliente(self, id_cliente, nome, morada, telefone):
         try:
@@ -111,7 +138,7 @@ class DatabaseManager:
                     cursor.execute(sql, (nome_hamburguer, ingredientes))
                 conn.commit()
         except sqlite3.Error as e:
-            print(f"Erro ao inserir hambúrguer: {e}")
+            return str(e)
 
     def insert_pedido(
         self, id_cliente, nome_hamburguer, quantidade, tamanho, valor_total, data_hora=None
@@ -136,7 +163,7 @@ class DatabaseManager:
                     )
                 conn.commit()
         except sqlite3.Error as e:
-            print(f"Erro ao inserir pedido: {e}")
+            return str(e)
 
     def get_table(self, table):
         try:
@@ -146,7 +173,7 @@ class DatabaseManager:
                     rows = cursor.fetchall()
                     return rows
         except sqlite3.Error as e:
-            print(f"Erro ao buscar a tabela {table}: {e}")
+            return str(e)
 
     def delete_cliente(self, id_cliente):
         try:
@@ -156,7 +183,7 @@ class DatabaseManager:
                     cursor.execute(sql, (id_cliente,))
                 conn.commit()
         except sqlite3.Error as e:
-            print(f"Erro ao deletar cliente: {e}")
+            return str(e)
 
     def delete_hamburguer(self, nome_hamburguer):
         try:
@@ -166,7 +193,7 @@ class DatabaseManager:
                     cursor.execute(sql, (nome_hamburguer,))
                 conn.commit()
         except sqlite3.Error as e:
-            print(f"Erro ao deletar hambúrguer: {e}")
+            return str(e)
 
     def populate_database(self):
         try:
@@ -190,7 +217,7 @@ class DatabaseManager:
 
             print("Banco de dados populado com sucesso.")
         except sqlite3.Error as e:
-            print(f"Erro ao popular banco de dados: {e}")
+            return str(e)
 
 if __name__ == "__main__":
     databaseContext = DatabaseManager("hamburgueria")
