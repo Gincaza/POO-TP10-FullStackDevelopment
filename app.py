@@ -270,6 +270,10 @@ def register():
     except Exception as e:
         return jsonify({"erro": str(e)}), 500
 
+@app.route("/pedido", methods=["POST"])
+@jwt_required()
+def registrar_pedido():
+    pass
 
 if __name__ == "__main__":
     app.run(debug=True)
