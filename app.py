@@ -8,7 +8,7 @@ jwt = JWTManager(app)
 
 database_context = DatabaseManager("hamburgueria")
 
-
+# Rotas de Cliente
 @app.route("/cliente", methods=["GET"])
 @jwt_required()
 def obter_clientes():
@@ -150,7 +150,7 @@ def deletar_cliente():
     except Exception as e:
         return jsonify({"erro": str(e)}), 400
 
-
+# Rotas de Hamburguer
 @app.route("/hamburguer", methods=["GET"])
 @jwt_required()
 def obter_tabela_hamburguer():
@@ -225,6 +225,7 @@ def deletar_hamburguer():
         return jsonify({"erro": str(e)}), 400
 
 
+# Rotas de Autenticação
 @app.route("/login", methods=["POST"])
 def login():
     dados = request.json
@@ -266,17 +267,8 @@ def register():
     except Exception as e:
         return jsonify({"erro": str(e)}), 500
 
-    # Verificar se o nome de usuário atende aos requisitos (por exemplo, comprimento mínimo)
-    if len(username) < 4:
-        return jsonify({"erro": "Nome de usuário deve ter no mínimo 4 caracteres"}), 400
-
-    # Verificar se a senha atende aos requisitos (por exemplo, comprimento mínimo)
-    if len(senha) < 6:
-        return jsonify({"erro": "Senha deve ter no mínimo 6 caracteres"}), 400
-
     try:
         database_context.insert_empregado(nome=nome, username=username, senha=senha)
-
         verify_user = database_context.verify_empregado(username=username, senha=senha)
 
         if verify_user:
