@@ -258,6 +258,22 @@ def register():
     if not all([nome, username, senha]):
         return jsonify({"erro": "Nome, username e senha são obrigatórios"}), 400
 
+    # Verificar se o nome de usuário já está em uso
+    try:
+        existing_user = database_context.get_empregado(username=username)
+        if existing_user:
+            return jsonify({"erro": "Nome de usuário já está em uso"}), 400
+    except Exception as e:
+        return jsonify({"erro": str(e)}), 500
+
+    # Verificar se o nome de usuário atende aos requisitos (por exemplo, comprimento mínimo)
+    if len(username) < 4:
+        return jsonify({"erro": "Nome de usuário deve ter no mínimo 4 caracteres"}), 400
+
+    # Verificar se a senha atende aos requisitos (por exemplo, comprimento mínimo)
+    if len(senha) < 6:
+        return jsonify({"erro": "Senha deve ter no mínimo 6 caracteres"}), 400
+
     try:
         database_context.insert_empregado(nome=nome, username=username, senha=senha)
 
@@ -269,6 +285,7 @@ def register():
             return jsonify({"erro": "Erro durante o registro. Tente novamente."}), 500
     except Exception as e:
         return jsonify({"erro": str(e)}), 500
+
 
 @app.route("/pedido", methods=["POST"])
 @jwt_required()
