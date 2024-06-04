@@ -1,16 +1,12 @@
 from flask import Flask, request, jsonify
-from flask_jwt_extended import JWTManager, create_access_token, jwt_required
 from databasemanager import DatabaseManager
 
 app = Flask(__name__)
-app.config["JWT_SECRET_KEY"] = "secretkey"
-jwt = JWTManager(app)
 
 database_context = DatabaseManager("hamburgueria")
 
 # Rotas de Cliente
 @app.route("/cliente", methods=["GET"])
-@jwt_required()
 def obter_clientes():
     try:
         clientes_rows = database_context.get_table("clientes")
@@ -29,9 +25,7 @@ def obter_clientes():
     except Exception as e:
         return jsonify({"erro": str(e)}), 400
 
-
 @app.route("/cliente/nome/<username>", methods=["GET"])
-@jwt_required()
 def obter_cliente_por_nome(username):
     try:
         cliente = database_context.get_cliente(nome=username)
@@ -51,7 +45,6 @@ def obter_cliente_por_nome(username):
 
 
 @app.route("/cliente/telefone/<int:telefone>", methods=["GET"])
-@jwt_required()
 def obter_cliente_por_telefone(telefone):
     try:
         cliente = database_context.get_cliente(telefone=str(telefone))
@@ -71,7 +64,6 @@ def obter_cliente_por_telefone(telefone):
 
 
 @app.route("/cliente", methods=["PUT"])
-@jwt_required()
 def atualizar_cliente():
     dados = request.json
     id_cliente = dados.get("id_cliente")
@@ -97,7 +89,6 @@ def atualizar_cliente():
 
 
 @app.route("/cliente", methods=["POST"])
-@jwt_required()
 def inserir_cliente():
     dados = request.json
     nome = dados.get("nome")
@@ -122,7 +113,6 @@ def inserir_cliente():
 
 
 @app.route("/cliente", methods=["DELETE"])
-@jwt_required()
 def deletar_cliente():
     dados = request.json
     cliente_id = dados.get("cliente_id")
@@ -152,7 +142,6 @@ def deletar_cliente():
 
 # Rotas de Hamburguer
 @app.route("/hamburguer", methods=["GET"])
-@jwt_required()
 def obter_tabela_hamburguer():
     try:
         linhas_hamburgueres = database_context.get_table("hamburgueres")
@@ -171,7 +160,6 @@ def obter_tabela_hamburguer():
 
 
 @app.route("/hamburguer", methods=["POST"])
-@jwt_required()
 def inserir_hamburguer():
     dados = request.json
     nome_hamburguer = dados.get("nome_hamburguer")
@@ -197,7 +185,6 @@ def inserir_hamburguer():
 
 
 @app.route("/hamburguer", methods=["DELETE"])
-@jwt_required()
 def deletar_hamburguer():
     dados = request.json
     nome_hamburguer = dados.get("nome_hamburguer")
@@ -280,9 +267,9 @@ def register():
 
 
 @app.route("/pedido", methods=["POST"])
-@jwt_required()
 def registrar_pedido():
     pass
 
 if __name__ == "__main__":
     app.run(debug=True)
+
