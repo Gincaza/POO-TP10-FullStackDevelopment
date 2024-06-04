@@ -226,9 +226,8 @@ def login():
         verify_user = database_context.verify_empregado(username=username, senha=senha)
 
         if verify_user:
-            access_token = create_access_token(identity=username)
             return jsonify(
-                {"message": "Usuário autenticado!", "access_token": access_token}
+                {"message": "Usuário autenticado!"}
             ), 200
         else:
             return jsonify({"message": "Não conseguiu se logar!"}), 400
@@ -268,7 +267,26 @@ def register():
 
 @app.route("/pedido", methods=["POST"])
 def registrar_pedido():
-    pass
+    dados = request.json
+    id_cliente = dados.get("id_cliente")
+    nome_hamburguer = dados.get("nome_hamburguer")
+    quantidade = dados.get("quantidade")
+    tamanho = dados.get("tamanho")
+    valor_total = dados.get("valor_total")
+    data_hora = dados.get("data_hora")
+
+    try:
+        database_context.insert_pedido(
+            id_cliente,
+            nome_hamburguer,
+            quantidade,
+            tamanho,
+            valor_total,
+            data_hora,
+        )
+        return jsonify({"message": "Pedido registrado com sucesso!"}), 201
+    except Exception as e:
+        return jsonify({"erro": str(e)}), 500
 
 if __name__ == "__main__":
     app.run(debug=True)
