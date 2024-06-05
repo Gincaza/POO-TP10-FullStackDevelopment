@@ -205,9 +205,9 @@ class DatabaseManager:
             self.insert_cliente("Bruno", "Porto", "912345678")
             self.insert_cliente("Carla", "Coimbra", "913456789")
 
-            self.insert_hamburguer("Cheeseburger", "Pão, Carne, Queijo, Alface, Tomate")
-            self.insert_hamburguer("Bacon Burger", "Pão, Carne, Bacon, Queijo, Molho BBQ")
-            self.insert_hamburguer("Veggie Burger", "Pão, Hambúrguer Vegetal, Alface, Tomate, Molho Especial")
+            self.insert_hamburguer("Cheeseburger", "Bread, Meat, Cheese, Lettuce, Tomato")
+            self.insert_hamburguer("Bacon Burger", "Bread, Meat, Bacon, Cheese, BBQ Sauce")
+            self.insert_hamburguer("Veggie Burger", "Bread, Veggie Burger, Lettuce, Tomato, Special Sauce")
 
             now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             self.insert_pedido(1, "Cheeseburger", 2, "normal", 12.50, now)

@@ -109,3 +109,41 @@
         Button:
             text: "Voltar"
             on_press: root.manager.current = 'main'
+
+<RegistrarPedidoScreen>:
+    id_cliente: id_cliente
+    nome_hamburguer: nome_hamburguer
+    quantidade: quantidade
+    tamanho: tamanho
+    valor_total: valor_total
+    data_hora: data_hora
+    BoxLayout:
+        orientation: 'vertical'
+        TextInput:
+            id: id_cliente
+            hint_text: "ID do Cliente"
+        Spinner:
+            id: nome_hamburguer
+            text: "Nome do Hamburguer"
+            values: []
+        TextInput:
+            id: quantidade
+            hint_text: "Quantidade"
+        Spinner:
+            id: tamanho
+            text: "Tamanho"
+            values: ["small", "duplo", "normal"]
+        TextInput:
+            id: valor_total
+            hint_text: "Valor Total"
+        TextInput:
+            id: data_hora
+            hint_text: "Data e Hora"
+        Button:
+            text: "Registrar Pedido"
+            on_press: root.registrar()
+        Button:
+            text: "Voltar"
+            on_press: root.voltar()
+
+
