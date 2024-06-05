@@ -77,9 +77,19 @@ def inserir_cliente():
     morada = dados.get("morada")
     telefone = dados.get("telefone")
 
+    if not nome:
+        return jsonify({"erro": "nome é necessário"}), 400
+    if not morada:
+        return jsonify({"erro": "morada é necessário"}), 400
+    if not telefone:
+        return jsonify({"erro": "telefone é necessário"}), 400
+
     try:
         database_context.insert_cliente(nome, morada, telefone)
         cliente_verificado = database_context.get_cliente(nome=nome, telefone=telefone)
+
+        if not cliente_verificado:
+            return jsonify({"erro": "Cliente não criado"}), 400
 
         dados_cliente = {
             "id_cliente": cliente_verificado[0],
@@ -91,7 +101,7 @@ def inserir_cliente():
             {"mensagem": "Cliente criado com sucesso!", "dados": dados_cliente}
         ), 201
     except Exception as e:
-        return jsonify({"erro": str(e)}), 400
+        return jsonify({"erro": str(e)}), 500
 
 
 @app.route("/cliente", methods=["DELETE"])
