@@ -22,11 +22,14 @@ def obter_clientes():
 
         return jsonify(rows_data), 200
     except Exception as e:
-        return jsonify({"erro": str(e)}), 500
+        return jsonify({"erro": str(e)}), 400
 
 @app.route("/cliente/nome/<username>", methods=["GET"])
 def obter_cliente_por_nome(username):
     try:
+        if not username:
+            return jsonify({"erro": "Username é necessário"}), 400
+        
         cliente = database_context.get_cliente(nome=username)
 
         if cliente:
