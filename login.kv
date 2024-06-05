@@ -97,6 +97,18 @@
             text: "Voltar"
             on_press: root.manager.current = 'main'
 
+<ObterHamburgueresScreen>:
+    hamburgueres_label: hamburgueres_label
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            id: hamburgueres_label
+            text: ""
+        Button:
+            text: "Voltar"
+            on_press: root.voltar()
+
+
 <RegistrarPedidoScreen>:
     id_cliente: id_cliente
     nome_hamburguer: nome_hamburguer

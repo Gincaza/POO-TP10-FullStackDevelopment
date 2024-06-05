@@ -163,6 +163,34 @@ class ObterClientesScreen(Screen):
     def voltar(self):
         self.manager.current = 'clientes'
 
+class ObterHamburgueresScreen(Screen):
+    hamburgueres_label = ObjectProperty(None)
+
+    def on_enter(self, *args):
+        self.obter_hamburgueres()
+
+    def obter_hamburgueres(self):
+        """
+        obtem a lista de hamburgueres do servidor e atualiza o rótulo na tela de hamburgueres.
+        """
+        url = "http://127.0.0.1:5000/hamburguer"
+        try:
+            response = requests.get(url)
+
+            if response.status_code == 200:
+                hamburgueres = response.json()
+
+                hamburgueres_texto = "\n".join([f"Nome: {hamburguer['nome_hamburguer']}, Ingredientes: {hamburguer['ingredientes']}" for hamburguer in hamburgueres])
+            
+                self.hamburgueres_label.text = hamburgueres_texto
+            else:
+                print("Failed to obtain hamburgueres")
+        except requests.exceptions.RequestException as e:
+            print(f"Error: {e}")
+    
+    def voltar(self):
+        self.manager.current = 'hamburgueres'
+
 
 Builder.load_file('login.kv')
 
@@ -178,6 +206,7 @@ class LoginApp(App):
         sm.add_widget(AdicionarClienteScreen(name='adicionar_cliente'))
         sm.add_widget(ObterClientesScreen(name='obter_clientes'))
         sm.add_widget(RegistrarPedidoScreen(name='registrar_pedido'))
+        sm.add_widget(ObterHamburgueresScreen(name='obter_hamburgueres'))
         return sm
 
 
