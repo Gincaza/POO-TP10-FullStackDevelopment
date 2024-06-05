@@ -175,7 +175,6 @@ class DatabaseManager:
                         raise Exception("Nenhum resultado encontrado para o hamburguer fornecido")
         except sqlite3.Error as e:
             raise Exception(f"Erro ao buscar hamburguer: {e}")
-            raise Exception(f"Erro ao buscar hamburguer: {e}")
 
     def delete_hamburguer(self, nome_hamburguer):
         if not nome_hamburguer:
