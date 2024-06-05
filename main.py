@@ -16,15 +16,20 @@ class LoginScreen(Screen):
             response = requests.post(url, json=data)
             if response.status_code == 200:
                 print("Login successful")
+                self.manager.current = "main"
             else:
                 print("Login failed")
         except requests.exceptions.RequestException as e:
             print(f"Error: {e}")
 
+class MainScreen(Screen):
+    pass
+
 class LoginApp(App):
     def build(self):
         sm = ScreenManager()
         sm.add_widget(LoginScreen(name='login'))
+        sm.add_widget(MainScreen(name='main'))
         return sm
 
 if __name__ == "__main__":

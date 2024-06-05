@@ -25,3 +25,16 @@
         Button:
             text: 'Login'
             on_press: root.login()
+
+<MainScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 20
+        spacing: 10
+
+        Label:
+            text: 'Welcome to the Main Screen'
+
+        Button:
+            text: 'Log Out'
+            on_press: app.root.current = 'login'
