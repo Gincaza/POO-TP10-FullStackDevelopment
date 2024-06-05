@@ -36,5 +36,21 @@
             text: 'Welcome to the Main Screen'
 
         Button:
+            text: 'Obter Clientes'
+            on_press: root.obter_clientes()
+
+        Button:
+            text: 'Adicionar Cliente'
+            on_press: root.adicionar_cliente()
+
+        Button:
+            text: 'Obter Hamburgueres'
+            on_press: root.obter_hamburgueres()
+
+        Button:
+            text: 'Registrar Pedido'
+            on_press: root.registrar_pedido()
+
+        Button:
             text: 'Log Out'
             on_press: app.root.current = 'login'
