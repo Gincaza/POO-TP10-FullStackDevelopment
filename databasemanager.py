@@ -9,37 +9,50 @@ class DatabaseManager:
         try:
             with sqlite3.connect(f"{databasename}.db") as conn:
                 sql = """
-                    CREATE TABLE IF NOT EXISTS clientes (
-                        id_cliente INTEGER PRIMARY KEY,
-                        nome TEXT,
-                        morada TEXT,
-                        telefone TEXT UNIQUE
-                    );
+                        CREATE TABLE IF NOT EXISTS clientes (
+                            id_cliente INTEGER PRIMARY KEY,
+                            nome TEXT,
+                            morada TEXT,
+                            telefone TEXT UNIQUE
+                        );
 
-                    CREATE TABLE IF NOT EXISTS hamburgueres (
-                        nome_hamburguer TEXT PRIMARY KEY,
-                        ingredientes TEXT,
-                        preco_base REAL
-                    );
+                        CREATE TABLE IF NOT EXISTS hamburgueres (
+                            id_hamburguer INTEGER PRIMARY KEY,
+                            nome_hamburguer TEXT,
+                            ingredientes TEXT
+                        );
 
-                    CREATE TABLE IF NOT EXISTS pedidos (
-                        id_pedido INTEGER PRIMARY KEY,
-                        id_cliente INTEGER,
-                        nome_hamburguer TEXT,
-                        quantidade INTEGER,
-                        tamanho TEXT,
-                        data_hora DATETIME DEFAULT CURRENT_TIMESTAMP,
-                        valor_total REAL,
-                        FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente),
-                        FOREIGN KEY (nome_hamburguer) REFERENCES hamburgueres(nome_hamburguer)
-                    );
+                        CREATE TABLE IF NOT EXISTS tamanhos_preco (
+                            id_tamanho INTEGER PRIMARY KEY,
+                            id_hamburguer INTEGER,
+                            tamanho TEXT,
+                            preco REAL,
+                            FOREIGN KEY (id_hamburguer) REFERENCES hamburgueres(id_hamburguer)
+                        );
 
-                    CREATE TABLE IF NOT EXISTS empregados (
-                        id_empregado INTEGER PRIMARY KEY,
-                        nome TEXT,
-                        username TEXT UNIQUE,
-                        senha TEXT
-                    );
+                        CREATE TABLE IF NOT EXISTS pedidos (
+                            id_pedido INTEGER PRIMARY KEY,
+                            id_cliente INTEGER,
+                            data_hora DATETIME DEFAULT CURRENT_TIMESTAMP,
+                            valor_total REAL,
+                            FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente)
+                        );
+
+                        CREATE TABLE IF NOT EXISTS pedidos_hamburgueres (
+                            id_pedido_hamburguer INTEGER PRIMARY KEY,
+                            id_pedido INTEGER,
+                            id_tamanho INTEGER,
+                            quantidade INTEGER,
+                            FOREIGN KEY (id_pedido) REFERENCES pedidos(id_pedido),
+                            FOREIGN KEY (id_tamanho) REFERENCES tamanhos_preco(id_tamanho)
+                        );
+
+                        CREATE TABLE IF NOT EXISTS empregados (
+                            id_empregado INTEGER PRIMARY KEY,
+                            nome TEXT,
+                            username TEXT UNIQUE,
+                            senha TEXT
+                        );
                     """
                 with closing(conn.cursor()) as cursor:
                     cursor.executescript(sql)
