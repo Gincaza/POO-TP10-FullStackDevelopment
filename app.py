@@ -207,10 +207,11 @@ def deletar_hamburguer():
     dados = request.json
     nome_hamburguer = dados.get("nome_hamburguer")
 
+    if not nome_hamburguer:
+        return jsonify({"erro": "Nome do hamburguer não fornecido"}), 400
+
     try:
-        hamburguer_verificado = database_context.get_hamburguer(
-            nome_hamburguer=nome_hamburguer
-        )
+        hamburguer_verificado = database_context.get_hamburguer(nome_hamburguer=nome_hamburguer)
 
         if hamburguer_verificado:
             database_context.delete_hamburguer(nome_hamburguer)
@@ -218,16 +219,14 @@ def deletar_hamburguer():
                 "nome_hamburguer": hamburguer_verificado[0],
                 "ingredientes": hamburguer_verificado[1],
             }
-            return jsonify(
-                {
-                    "mensagem": "Hamburguer deletado com sucesso!",
-                    "dados": dados_hamburguer,
-                }
-            ), 201
+            return jsonify({
+                "mensagem": "Hamburguer deletado com sucesso!",
+                "dados": dados_hamburguer
+            }), 201
         else:
             return jsonify({"erro": "Hamburguer não encontrado"}), 404
     except Exception as e:
-        return jsonify({"erro": str(e)}), 400
+        return jsonify({"erro": str(e)}), 500
 
 
 # Rotas de Autenticação
