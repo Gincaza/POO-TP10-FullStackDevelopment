@@ -118,16 +118,12 @@ def inserir_cliente():
 def deletar_cliente():
     dados = request.json
     cliente_id = dados.get("cliente_id")
-    nome = dados.get("nome")
-    telefone = dados.get("telefone")
 
-    if not cliente_id or not nome or not telefone:
-        return jsonify({"erro": "Todos os campos são obrigatórios"}), 400
+    if not cliente_id:
+        return jsonify({"erro": "id_cliente é necessário"}), 400
 
     try:
-        cliente_verificado = database_context.get_cliente(
-            id_cliente=cliente_id, nome=nome, telefone=telefone
-        )
+        cliente_verificado = database_context.get_cliente(id_cliente=cliente_id)
 
         if not cliente_verificado:
             return jsonify({"erro": "Cliente não encontrado"}), 404
