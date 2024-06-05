@@ -152,6 +152,10 @@ def obter_tabela_hamburguer():
         linhas_hamburgueres = database_context.get_table("hamburgueres")
         dados_linhas = []
         for linha in linhas_hamburgueres:
+            if linha is None:
+                raise Exception("Linha vazia encontrada na tabela de hambúrgueres")
+            if len(linha) < 3:
+                raise Exception("Linha da tabela de hambúrgueres com menos de 3 colunas")
             dados_linha = {
                 "nome_hamburguer": linha[0],
                 "ingredientes": linha[1],
