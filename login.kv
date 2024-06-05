@@ -1,0 +1,27 @@
+<LoginScreen>:
+    username: username
+    password: password
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 20
+        spacing: 10
+
+        Label:
+            text: 'Username'
+
+        TextInput:
+            id: username
+            multiline: False
+
+        Label:
+            text: 'Password'
+
+        TextInput:
+            id: password
+            multiline: False
+            password: True
+
+        Button:
+            text: 'Login'
+            on_press: root.login()
