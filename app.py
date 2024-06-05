@@ -45,26 +45,6 @@ def obter_cliente_por_nome(username):
     except Exception as e:
         return jsonify({"erro": str(e)}), 400
 
-
-@app.route("/cliente/telefone/<int:telefone>", methods=["GET"])
-def obter_cliente_por_telefone(telefone):
-    try:
-        cliente = database_context.get_cliente(telefone=str(telefone))
-
-        if cliente:
-            cliente_data = {
-                "id_cliente": cliente[0],
-                "nome": cliente[1],
-                "morada": cliente[2],
-                "telefone": cliente[3],
-            }
-            return jsonify(cliente_data), 200
-        else:
-            return jsonify({"erro": "Cliente não encontrado"}), 404
-    except Exception as e:
-        return jsonify({"erro": str(e)}), 400
-
-
 @app.route("/cliente", methods=["PUT"])
 def atualizar_cliente():
     dados = request.json
