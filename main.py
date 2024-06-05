@@ -6,7 +6,6 @@ from kivy.properties import ObjectProperty
 import requests
 import json
 
-Builder.load_file('login.kv')
 
 class LoginScreen(Screen):
     def login(self):
@@ -25,57 +24,25 @@ class LoginScreen(Screen):
         except requests.exceptions.RequestException as e:
             print(f"Error: {e}")
 
+
 class MainScreen(Screen):
+    def ir_para_clientes(self):
+        self.manager.current = 'clientes'
+
+    def ir_para_hamburgueres(self):
+        self.manager.current = 'hamburgueres'
+
+    def ir_para_pedidos(self):
+        self.manager.current = 'pedidos'
+
+
+class ClientesScreen(Screen):
     def obter_clientes(self):
-        """
-        obtem a lista de clientes do servidor e atualiza o rótulo na tela de clientes.
-        """
-        url = "http://127.0.0.1:5000/cliente"
-        try:
-            response = requests.get(url)
-
-            if response.status_code == 200:
-                clientes = response.json()
-
-                # Format each client as a JSON string with indentation
-                clientes_texto = "\n".join([json.dumps(cliente, indent=4) for cliente in clientes])
-                
-                # Update the label on the clientes screen
-                self.manager.get_screen('clientes').clientes_label.text = clientes_texto
-                
-                # Switch to the clientes screen
-                self.manager.current = 'clientes'
-            else:
-                print("Failed to obtain clients")
-
-        except requests.exceptions.RequestException as e:
-            print(f"Error: {e}")
+        self.manager.current = 'obter_clientes'
 
     def adicionar_cliente(self):
         self.manager.current = 'adicionar_cliente'
 
-    def obter_hamburgueres(self):
-        url = "http://127.0.0.1:5000/hamburguer"
-        try:
-            response = requests.get(url)
-            if response.status_code == 200:
-                hamburgueres = response.json()
-                
-                hamburgueres_texto = "\n".join([json.dumps(hamburguer, indent=4) for hamburguer in hamburgueres])
-
-                self.manager.get_screen('hamburgueres').hamburgueres_label.text = hamburgueres_texto
-                self.manager.current = 'hamburgueres'
-            else:
-                print("Failed to obtain hamburgers")
-
-        except requests.exceptions.RequestException as e:
-            print(f"Error: {e}")
-
-    def registrar_pedido(self):
-        self.manager.current = 'registrar_pedido'
-
-class ClientesScreen(Screen):
-    clientes_label = ObjectProperty(None)
 
 class AdicionarClienteScreen(Screen):
     nome = ObjectProperty(None)
@@ -84,7 +51,7 @@ class AdicionarClienteScreen(Screen):
 
     def voltar(self):
         self.manager.current = 'main'
-    
+
     def adicionar(self):
         url = "http://127.0.0.1:5000/cliente"
         data = {
@@ -92,7 +59,7 @@ class AdicionarClienteScreen(Screen):
             "morada": self.morada.text,
             "telefone": self.telefone.text
         }
-    
+
         try:
             response = requests.post(url, json=data)
             if response.status_code == 201:
@@ -103,8 +70,16 @@ class AdicionarClienteScreen(Screen):
         except requests.exceptions.RequestException as e:
             print(f"Error: {e}")
 
+
 class HamburgueresScreen(Screen):
-    hamburgueres_label = ObjectProperty(None)
+    def obter_hamburgueres(self):
+        self.manager.current = 'obter_hamburgueres'
+
+
+class PedidosScreen(Screen):
+    def registrar_pedidos(self):
+        self.manager.current = 'registrar_pedido'
+
 
 class RegistrarPedidoScreen(Screen):
     id_cliente = ObjectProperty(None)
@@ -116,7 +91,7 @@ class RegistrarPedidoScreen(Screen):
 
     def on_enter(self, *args):
         self.nome_hamburguer.values = self.get_hamburgueres()
-    
+
     def get_hamburgueres(self):
         url = "http://127.0.0.1:5000/hamburguer"
         try:
@@ -134,7 +109,7 @@ class RegistrarPedidoScreen(Screen):
 
     def voltar(self):
         self.manager.current = 'main'
-    
+
     def registrar(self):
         url = "http://127.0.0.1:5000/pedido"
         data = {
@@ -145,16 +120,52 @@ class RegistrarPedidoScreen(Screen):
             "valor_total": self.valor_total.text,
             "data_hora": self.data_hora.text
         }
-    
+
         try:
             response = requests.post(url, json=data)
             if response.status_code == 201:
                 print("Pedido registrado com sucesso!")
-                self.manager.current = 'main'
+                self.manager.current = 'clientes'
             else:
                 print("Falha ao registrar o pedido")
         except requests.exceptions.RequestException as e:
             print(f"Error: {e}")
+
+
+class ObterClientesScreen(Screen):
+    clientes_label = ObjectProperty(None)
+
+    def on_enter(self, *args):
+        self.obter_clientes()
+
+    def obter_clientes(self):
+        """
+        obtem a lista de clientes do servidor e atualiza o rótulo na tela de clientes.
+        """
+        url = "http://127.0.0.1:5000/cliente"
+        try:
+            response = requests.get(url)
+
+            if response.status_code == 200:
+                clientes = response.json()
+
+                # Format each client as a JSON string with indentation
+                clientes_texto = "\n".join([f"Nome: {cliente['nome']}, Morada: {cliente['morada']}, Telefone: {cliente['telefone']}" for cliente in clientes])
+
+                # Update the label on the clientes screen
+                self.clientes_label.text = clientes_texto
+            else:
+                print("Failed to obtain clients")
+
+        except requests.exceptions.RequestException as e:
+            print(f"Error: {e}")
+    
+    def voltar(self):
+        self.manager.current = 'clientes'
+
+
+Builder.load_file('login.kv')
+
 
 class LoginApp(App):
     def build(self):
@@ -162,10 +173,14 @@ class LoginApp(App):
         sm.add_widget(LoginScreen(name='login'))
         sm.add_widget(MainScreen(name='main'))
         sm.add_widget(ClientesScreen(name='clientes'))
-        sm.add_widget(AdicionarClienteScreen(name='adicionar_cliente'))
         sm.add_widget(HamburgueresScreen(name='hamburgueres'))
-        sm.add_widget(RegistrarPedidoScreen(name='registrar_pedido'))
+        sm.add_widget(PedidosScreen(name='pedidos'))
+        sm.add_widget(AdicionarClienteScreen(name='adicionar_cliente'))
+        sm.add_widget(ObterClientesScreen(name='obter_clientes'))
+        sm.add_widget(RegistrarPedidoScreen(name='registrar_pedidos'))
         return sm
+
 
 if __name__ == "__main__":
     LoginApp().run()
+

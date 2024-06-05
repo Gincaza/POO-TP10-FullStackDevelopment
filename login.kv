@@ -29,53 +29,29 @@
 <MainScreen>:
     BoxLayout:
         orientation: 'vertical'
-        padding: 20
-        spacing: 10
-
-        Label:
-            text: 'Welcome to the Main Screen'
-
         Button:
-            text: 'Obter Clientes'
-            on_press: root.obter_clientes()
-
+            text: "Clientes"
+            on_press: root.manager.current = 'clientes'
         Button:
-            text: 'Adicionar Cliente'
-            on_press: root.adicionar_cliente()
-
+            text: "Hamburgueres"
+            on_press: root.manager.current = 'hamburgueres'
         Button:
-            text: 'Obter Hamburgueres'
-            on_press: root.obter_hamburgueres()
+            text: "Pedidos"
+            on_press: root.manager.current = 'pedidos'
 
-        Button:
-            text: 'Registrar Pedido'
-            on_press: root.registrar_pedido()
-
-        Button:
-            text: 'Log Out'
-            on_press: app.root.current = 'login'
 
 <ClientesScreen>:
-    clientes_label: clientes_label
-
     BoxLayout:
         orientation: 'vertical'
-        padding: 20
-        spacing: 10
-
-        Label:
-            text: 'Clientes Obtidos'
-
-        ScrollView:
-            Label:
-                id: clientes_label
-                text: ''
-                size_hint_y: None
-                height: self.texture_size[1]
-
         Button:
-            text: 'Voltar'
-            on_press: app.root.current = 'main'
+            text: "Obter Clientes"
+            on_press: root.obter_clientes()
+        Button:
+            text: "Adicionar Cliente"
+            on_press: root.adicionar_cliente()
+        Button:
+            text: "Voltar"
+            on_press: root.manager.current = 'main'
 
 <AdicionarClienteScreen>:
     nome: nome
@@ -99,13 +75,24 @@
             text: "Voltar"
             on_press: root.voltar()
 
-<HamburgueresScreen>:
-    hamburgueres_label: hamburgueres_label
+<ObterClientesScreen>:
+    clientes_label: clientes_label
     BoxLayout:
         orientation: 'vertical'
         Label:
-            id: hamburgueres_label
+            id: clientes_label
             text: ""
+        Button:
+            text: "Voltar"
+            on_press: root.voltar()
+
+
+<HamburgueresScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        Button:
+            text: "Obter Hamburgueres"
+            on_press: root.obter_hamburgueres()
         Button:
             text: "Voltar"
             on_press: root.manager.current = 'main'
@@ -147,3 +134,12 @@
             on_press: root.voltar()
 
 
+<PedidosScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        Button:
+            text: "Registrar Pedido"
+            on_press: root.registrar_pedidos()
+        Button:
+            text: "Voltar"
+            on_press: root.manager.current = 'main'
