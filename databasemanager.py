@@ -227,20 +227,31 @@ class DatabaseManager:
 
     def populate_database(self):
         try:
-            self.insert_cliente("Ana", "Lisboa", "911234567")
-            self.insert_cliente("Bruno", "Porto", "912345678")
-            self.insert_cliente("Carla", "Coimbra", "913456789")
+            clients = [
+                ("Ana", "Lisboa", "911234567"),
+                ("Bruno", "Porto", "912345678"),
+                ("Carla", "Coimbra", "913456789")
+            ]
+            burgers = [
+                ("Cheeseburger", "Bread, Meat, Cheese, Lettuce, Tomato", 12.50),
+                ("Bacon Burger", "Bread, Meat, Bacon, Cheese, BBQ Sauce", 8.75),
+                ("Veggie Burger", "Bread, Veggie Burger, Lettuce, Tomato, Special Sauce", 15.00)
+            ]
+            orders = [
+                (1, "Cheeseburger", 2, "normal", 12.50),
+                (2, "Bacon Burger", 1, "duplo", 8.75),
+                (3, "Veggie Burger", 3, "normal", 15.00)
+            ]
 
-            self.insert_hamburguer("Cheeseburger", "Bread, Meat, Cheese, Lettuce, Tomato", 12.50)
-            self.insert_hamburguer("Bacon Burger", "Bread, Meat, Bacon, Cheese, BBQ Sauce", 8.75)
-            self.insert_hamburguer("Veggie Burger", "Bread, Veggie Burger, Lettuce, Tomato, Special Sauce", 15.00)
-
-            now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            self.insert_pedido(1, "Cheeseburger", 2, "normal", 12.50, now)
-            self.insert_pedido(2, "Bacon Burger", 1, "duplo", 8.75, now)
-            self.insert_pedido(3, "Veggie Burger", 3, "normal", 15.00, now)
-
-            self.insert_empregado("Gustavo Cruz", "mothnue", "password123!")
+            with sqlite3.connect(f"{self.__databasename}.db") as conn:
+                for client in clients:
+                    self.insert_cliente(*client)
+                for burger in burgers:
+                    self.insert_hamburguer(*burger)
+                now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                for order in orders:
+                    self.insert_pedido(*order, now)
+                self.insert_empregado("Gustavo Cruz", "mothnue", "password123!")
             print("Banco de dados populado com sucesso.")
         except sqlite3.Error as e:
             raise Exception(f"Erro ao popular banco de dados: {e}")
