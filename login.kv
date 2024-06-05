@@ -76,3 +76,25 @@
         Button:
             text: 'Voltar'
             on_press: app.root.current = 'main'
+
+<AdicionarClienteScreen>:
+    nome: nome
+    morada: morada
+    telefone: telefone
+    BoxLayout:
+        orientation: 'vertical'
+        TextInput:
+            id: nome
+            hint_text: "Nome"
+        TextInput:
+            id: morada
+            hint_text: "Morada"
+        TextInput:
+            id: telefone
+            hint_text: "Telefone"
+        Button:
+            text: "Adicionar Cliente"
+            on_press: root.adicionar()
+        Button:
+            text: "Voltar"
+            on_press: root.voltar()

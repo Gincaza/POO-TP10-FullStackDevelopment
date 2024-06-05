@@ -51,20 +51,7 @@ class MainScreen(Screen):
             print(f"Error: {e}")
 
     def adicionar_cliente(self):
-        url = "http://127.0.0.1:5000/cliente"
-        data = {
-            "nome": "Novo Cliente",
-            "morada": "Endereço",
-            "telefone": "123456789"
-        }
-        try:
-            response = requests.post(url, json=data)
-            if response.status_code == 201:
-                print("Cliente adicionado com sucesso!")
-            else:
-                print("Falha ao adicionar cliente")
-        except requests.exceptions.RequestException as e:
-            print(f"Error: {e}")
+        self.manager.current = 'adicionar_cliente'
 
     def obter_hamburgueres(self):
         url = "http://127.0.0.1:5000/hamburguer"
@@ -100,12 +87,39 @@ class MainScreen(Screen):
 class ClientesScreen(Screen):
     clientes_label = ObjectProperty(None)
 
+class AdicionarClienteScreen(Screen):
+    nome = ObjectProperty(None)
+    morada = ObjectProperty(None)
+    telefone = ObjectProperty(None)
+
+    def voltar(self):
+        self.manager.current = 'main'
+    
+    def adicionar(self):
+        url = "http://127.0.0.1:5000/cliente"
+        data = {
+            "nome": self.nome.text,
+            "morada": self.morada.text,
+            "telefone": self.telefone.text
+        }
+    
+        try:
+            response = requests.post(url, json=data)
+            if response.status_code == 201:
+                print("Cliente adicionado com sucesso!")
+                self.manager.current = 'main'
+            else:
+                print("Falha ao adicionar o cliente")
+        except requests.exceptions.RequestException as e:
+            print(f"Error: {e}")
+
 class LoginApp(App):
     def build(self):
         sm = ScreenManager()
         sm.add_widget(LoginScreen(name='login'))
         sm.add_widget(MainScreen(name='main'))
         sm.add_widget(ClientesScreen(name='clientes'))
+        sm.add_widget(AdicionarClienteScreen(name='adicionar_cliente'))
         return sm
 
 if __name__ == "__main__":
