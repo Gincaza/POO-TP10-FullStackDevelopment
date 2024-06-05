@@ -10,20 +10,19 @@ database_context = DatabaseManager("hamburgueria")
 def obter_clientes():
     try:
         clientes_rows = database_context.get_table("clientes")
-        rows_data = []
-
-        for row in clientes_rows:
-            row_data = {
+        rows_data = [
+            {
                 "id_cliente": row[0],
                 "nome": row[1],
                 "morada": row[2],
                 "telefone": row[3],
             }
-            rows_data.append(row_data)
+            for row in clientes_rows
+        ]
 
         return jsonify(rows_data), 200
     except Exception as e:
-        return jsonify({"erro": str(e)}), 400
+        return jsonify({"erro": str(e)}), 500
 
 @app.route("/cliente/nome/<username>", methods=["GET"])
 def obter_cliente_por_nome(username):
