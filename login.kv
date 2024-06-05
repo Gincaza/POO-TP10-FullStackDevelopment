@@ -98,3 +98,14 @@
         Button:
             text: "Voltar"
             on_press: root.voltar()
+
+<HamburgueresScreen>:
+    hamburgueres_label: hamburgueres_label
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            id: hamburgueres_label
+            text: ""
+        Button:
+            text: "Voltar"
+            on_press: root.manager.current = 'main'

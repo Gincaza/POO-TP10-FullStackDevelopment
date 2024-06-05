@@ -59,9 +59,14 @@ class MainScreen(Screen):
             response = requests.get(url)
             if response.status_code == 200:
                 hamburgueres = response.json()
-                print("Hamburgueres:", json.dumps(hamburgueres, indent=4))
+                
+                hamburgueres_texto = "\n".join([json.dumps(hamburguer, indent=4) for hamburguer in hamburgueres])
+
+                self.manager.get_screen('hamburgueres').hamburgueres_label.text = hamburgueres_texto
+                self.manager.current = 'hamburgueres'
             else:
                 print("Failed to obtain hamburgers")
+
         except requests.exceptions.RequestException as e:
             print(f"Error: {e}")
 
@@ -113,6 +118,9 @@ class AdicionarClienteScreen(Screen):
         except requests.exceptions.RequestException as e:
             print(f"Error: {e}")
 
+class HamburgueresScreen(Screen):
+    hamburgueres_label = ObjectProperty(None)
+
 class LoginApp(App):
     def build(self):
         sm = ScreenManager()
@@ -120,6 +128,7 @@ class LoginApp(App):
         sm.add_widget(MainScreen(name='main'))
         sm.add_widget(ClientesScreen(name='clientes'))
         sm.add_widget(AdicionarClienteScreen(name='adicionar_cliente'))
+        sm.add_widget(HamburgueresScreen(name='hamburgueres'))
         return sm
 
 if __name__ == "__main__":
