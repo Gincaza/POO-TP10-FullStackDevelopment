@@ -151,24 +151,30 @@ class DatabaseManager:
 
     def get_hamburguer(self, nome_hamburguer=None, ingredientes=None):
         try:
-            if not nome_hamburguer and not ingredientes:
+            if nome_hamburguer is None and ingredientes is None:
                 raise ValueError("Pelo menos um critério de busca (nome_hamburguer ou ingredientes) deve ser fornecido")
 
             with sqlite3.connect(f"{self.__databasename}.db") as conn:
                 with closing(conn.cursor()) as cursor:
+                    query = None
+                    params = None
+
                     if nome_hamburguer:
                         query = "SELECT * FROM hamburgueres WHERE nome_hamburguer = ?"
-                        cursor.execute(query, (nome_hamburguer,))
+                        params = (nome_hamburguer,)
                     elif ingredientes:
                         query = "SELECT * FROM hamburgueres WHERE ingredientes = ?"
-                        cursor.execute(query, (ingredientes,))
+                        params = (ingredientes,)
 
+                    cursor.execute(query, params)
                     result = cursor.fetchone()
+
                     if result:
                         return result
                     else:
                         raise Exception("Nenhum resultado encontrado para o hamburguer fornecido")
         except sqlite3.Error as e:
+            raise Exception(f"Erro ao buscar hamburguer: {e}")
             raise Exception(f"Erro ao buscar hamburguer: {e}")
 
     def delete_hamburguer(self, nome_hamburguer):
