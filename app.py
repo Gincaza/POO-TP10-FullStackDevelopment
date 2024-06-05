@@ -53,9 +53,21 @@ def atualizar_cliente():
     morada = dados.get("morada")
     telefone = dados.get("telefone")
 
+    if not id_cliente:
+        return jsonify({"erro": "id_cliente é necessário"}), 400
+    if not nome:
+        return jsonify({"erro": "nome é necessário"}), 400
+    if not morada:
+        return jsonify({"erro": "morada é necessário"}), 400
+    if not telefone:
+        return jsonify({"erro": "telefone é necessário"}), 400
+
     try:
         database_context.update_cliente(id_cliente, nome, morada, telefone)
         cliente_atualizado = database_context.get_cliente(nome=nome, telefone=telefone)
+
+        if not cliente_atualizado:
+            return jsonify({"erro": "Cliente não encontrado"}), 404
 
         dados_cliente = {
             "id_cliente": cliente_atualizado[0],
@@ -63,9 +75,7 @@ def atualizar_cliente():
             "morada": cliente_atualizado[2],
             "telefone": cliente_atualizado[3],
         }
-        return jsonify(
-            {"mensagem": "Cliente atualizado com sucesso", "dados": dados_cliente}
-        ), 201
+        return jsonify({"mensagem": "Cliente atualizado com sucesso", "dados": dados_cliente}), 201
     except Exception as e:
         return jsonify({"erro": str(e)}), 400
 
