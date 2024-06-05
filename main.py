@@ -50,7 +50,7 @@ class AdicionarClienteScreen(Screen):
     telefone = ObjectProperty(None)
 
     def voltar(self):
-        self.manager.current = 'main'
+        self.manager.current = 'clientes'
 
     def adicionar(self):
         url = "http://127.0.0.1:5000/cliente"
@@ -108,7 +108,7 @@ class RegistrarPedidoScreen(Screen):
             return []
 
     def voltar(self):
-        self.manager.current = 'main'
+        self.manager.current = 'pedidos'
 
     def registrar(self):
         url = "http://127.0.0.1:5000/pedido"
@@ -125,7 +125,7 @@ class RegistrarPedidoScreen(Screen):
             response = requests.post(url, json=data)
             if response.status_code == 201:
                 print("Pedido registrado com sucesso!")
-                self.manager.current = 'clientes'
+                self.manager.current = 'pedidos'
             else:
                 print("Falha ao registrar o pedido")
         except requests.exceptions.RequestException as e:
@@ -177,7 +177,7 @@ class LoginApp(App):
         sm.add_widget(PedidosScreen(name='pedidos'))
         sm.add_widget(AdicionarClienteScreen(name='adicionar_cliente'))
         sm.add_widget(ObterClientesScreen(name='obter_clientes'))
-        sm.add_widget(RegistrarPedidoScreen(name='registrar_pedidos'))
+        sm.add_widget(RegistrarPedidoScreen(name='registrar_pedido'))
         return sm
 
 
