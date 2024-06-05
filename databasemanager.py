@@ -178,6 +178,9 @@ class DatabaseManager:
             raise Exception(f"Erro ao buscar hamburguer: {e}")
 
     def delete_hamburguer(self, nome_hamburguer):
+        if not nome_hamburguer:
+            raise ValueError("Nome do hamburguer não fornecido")
+
         try:
             with sqlite3.connect(f"{self.__databasename}.db") as conn:
                 sql = "DELETE FROM hamburgueres WHERE nome_hamburguer = ?;"
