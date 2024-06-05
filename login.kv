@@ -140,7 +140,6 @@
     nome_hamburguer: nome_hamburguer
     quantidade: quantidade
     tamanho: tamanho
-    data_hora: data_hora
     BoxLayout:
         orientation: 'vertical'
         TextInput:
@@ -157,10 +156,6 @@
             id: tamanho
             text: "Tamanho"
             values: ["small", "duplo", "normal"]
-            on_text: root.atualizar_preco(self.text)
-        TextInput:
-            id: data_hora
-            hint_text: "Data e Hora"
         Button:
             text: "Registrar Pedido"
             on_press: root.registrar()

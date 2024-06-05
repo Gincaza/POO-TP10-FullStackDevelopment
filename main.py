@@ -5,6 +5,7 @@ from kivy.uix.spinner import Spinner
 from kivy.properties import ObjectProperty
 import requests
 import json
+from datetime import datetime
 
 
 class LoginScreen(Screen):
@@ -89,31 +90,9 @@ class RegistrarPedidoScreen(Screen):
     nome_hamburguer = ObjectProperty(None)
     quantidade = ObjectProperty(None)
     tamanho = ObjectProperty(None)
-    valor_total = ObjectProperty(None)
-    data_hora = ObjectProperty(None)
 
     def on_enter(self, *args):
         self.nome_hamburguer.values = self.get_hamburgueres()
-    
-    def calcular_preco(self):
-        preco_base = float(self.valor_total.text)
-
-        if self.tamanho.text == "duplo":
-            return preco_base * 2
-        elif self.tamanho.text == "small":
-            return preco_base * 0.8
-        else:
-            return preco_base
-    
-    def atualizar_preco(self, tamanho):
-        preco_base = float(self.valor_total.text)
-
-        if tamanho == "duplo":
-            self.valor_total.text = str(preco_base * 2)
-        elif tamanho == "small":
-            self.valor_total.text = str(preco_base * 0.8)
-        else:
-            self.valor_total.text = str(preco_base)
 
     def get_hamburgueres(self):
         url = "http://127.0.0.1:5000/hamburguer"
@@ -140,8 +119,7 @@ class RegistrarPedidoScreen(Screen):
             "nome_hamburguer": self.nome_hamburguer.text,
             "quantidade": self.quantidade.text,
             "tamanho": self.tamanho.text,
-            "valor_total": self.calcular_preco(),
-            "data_hora": self.data_hora.text
+            "data_hora": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         }
 
         try:
