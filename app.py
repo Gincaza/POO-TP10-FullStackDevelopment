@@ -295,10 +295,10 @@ def registrar_pedido():
         if not hamburguer_details:
             return jsonify({"erro": "Hamburguer não encontrado"}), 400
 
-        preco_hamburguer = hamburguer_details[2]
+        preco_hamburguer = float(hamburguer_details[2])
 
         if tamanho == "normal":
-            multiplier = 1
+            multiplier = 1.0
         elif tamanho == "duplo":
             multiplier = 1.2
         elif tamanho == "small":
@@ -306,7 +306,7 @@ def registrar_pedido():
         else:
             return jsonify({"erro": "Tamanho inválido"}), 400
 
-        valor_total = preco_hamburguer * multiplier * quantidade
+        valor_total = preco_hamburguer * multiplier * int(quantidade)
 
         database_context.insert_pedido(
             id_cliente,
@@ -319,7 +319,6 @@ def registrar_pedido():
         return jsonify({"message": "Pedido registrado com sucesso!"}), 201
     except Exception as e:
         return jsonify({"erro": str(e)}), 500
-
 if __name__ == "__main__":
     app.run(debug=True)
 
