@@ -240,14 +240,10 @@ def login():
         return jsonify({"erro": "Username e senha são obrigatórios"}), 400
 
     try:
-        verify_user = database_context.verify_empregado(username=username, senha=senha)
-
-        if verify_user:
-            return jsonify(
-                {"message": "Usuário autenticado!"}
-            ), 200
-        else:
+        if not database_context.verify_empregado(username=username, senha=senha):
             return jsonify({"message": "Não conseguiu se logar!"}), 400
+
+        return jsonify({"message": "Usuário autenticado!"}), 200
     except Exception as e:
         return jsonify({"erro": str(e)}), 500
 
