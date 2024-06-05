@@ -288,6 +288,9 @@ def registrar_pedido():
     valor_total = dados.get("valor_total")
     data_hora = dados.get("data_hora")
 
+    if not all([id_cliente, nome_hamburguer, quantidade, tamanho, valor_total, data_hora]):
+        return jsonify({"erro": "Dados incompletos"}), 400
+
     try:
         database_context.insert_pedido(
             id_cliente,
