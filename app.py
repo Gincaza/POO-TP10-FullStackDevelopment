@@ -285,7 +285,7 @@ def registrar_pedido():
     nome_hamburguer = dados.get("nome_hamburguer")
     quantidade = dados.get("quantidade")
     tamanho = dados.get("tamanho")
-    valor_total = dados.get("valor_total")
+    valor_total = database_context.get_hamburguer(nome_hamburguer)[2] * quantidade
     data_hora = dados.get("data_hora")
 
     if not all([id_cliente, nome_hamburguer, quantidade, tamanho, valor_total, data_hora]):
