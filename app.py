@@ -121,26 +121,29 @@ def deletar_cliente():
     nome = dados.get("nome")
     telefone = dados.get("telefone")
 
+    if not cliente_id or not nome or not telefone:
+        return jsonify({"erro": "Todos os campos são obrigatórios"}), 400
+
     try:
         cliente_verificado = database_context.get_cliente(
             id_cliente=cliente_id, nome=nome, telefone=telefone
         )
 
-        if cliente_verificado:
-            database_context.delete_cliente(cliente_id)
-            dados_cliente = {
-                "id_cliente": cliente_verificado[0],
-                "nome": cliente_verificado[1],
-                "morada": cliente_verificado[2],
-                "telefone": cliente_verificado[3],
-            }
-            return jsonify(
-                {"mensagem": "Cliente deletado com sucesso!", "dados": dados_cliente}
-            ), 201
-        else:
+        if not cliente_verificado:
             return jsonify({"erro": "Cliente não encontrado"}), 404
+
+        database_context.delete_cliente(cliente_id)
+        dados_cliente = {
+            "id_cliente": cliente_verificado[0],
+            "nome": cliente_verificado[1],
+            "morada": cliente_verificado[2],
+            "telefone": cliente_verificado[3],
+        }
+        return jsonify(
+            {"mensagem": "Cliente deletado com sucesso!", "dados": dados_cliente}
+        ), 201
     except Exception as e:
-        return jsonify({"erro": str(e)}), 400
+        return jsonify({"erro": str(e)}), 500
 
 # Rotas de Hamburguer
 @app.route("/hamburguer", methods=["GET"])
