@@ -285,13 +285,29 @@ def registrar_pedido():
     nome_hamburguer = dados.get("nome_hamburguer")
     quantidade = dados.get("quantidade")
     tamanho = dados.get("tamanho")
-    valor_total = database_context.get_hamburguer(nome_hamburguer)[2] * quantidade
     data_hora = dados.get("data_hora")
 
-    if not all([id_cliente, nome_hamburguer, quantidade, tamanho, valor_total, data_hora]):
+    if not all([id_cliente, nome_hamburguer, quantidade, tamanho, data_hora]):
         return jsonify({"erro": "Dados incompletos"}), 400
 
     try:
+        hamburguer_details = database_context.get_hamburguer(nome_hamburguer)
+        if not hamburguer_details:
+            return jsonify({"erro": "Hamburguer não encontrado"}), 400
+
+        preco_hamburguer = hamburguer_details[2]
+
+        if tamanho == "normal":
+            multiplier = 1
+        elif tamanho == "duplo":
+            multiplier = 1.2
+        elif tamanho == "small":
+            multiplier = 0.8
+        else:
+            return jsonify({"erro": "Tamanho inválido"}), 400
+
+        valor_total = preco_hamburguer * multiplier * quantidade
+
         database_context.insert_pedido(
             id_cliente,
             nome_hamburguer,
