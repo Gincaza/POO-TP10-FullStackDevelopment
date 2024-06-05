@@ -94,6 +94,9 @@
             text: "Obter Hamburgueres"
             on_press: root.obter_hamburgueres()
         Button:
+            text: "Inserir Hamburguer"
+            on_press: root.inserir_hamburguer()
+        Button:
             text: "Voltar"
             on_press: root.manager.current = 'main'
 
@@ -108,13 +111,35 @@
             text: "Voltar"
             on_press: root.voltar()
 
+<InserirHamburguerScreen>:
+    nome_hamburguer: nome_hamburguer
+    ingredientes: ingredientes
+    preco_base: preco_base
+    BoxLayout:
+        orientation: 'vertical'
+        TextInput:
+            id: nome_hamburguer
+            hint_text: "Nome do Hambúrguer"
+        TextInput:
+            id: ingredientes
+            hint_text: "Ingredientes"
+        TextInput:
+            id: preco_base
+            hint_text: "Preço Base"
+        Button:
+            text: "Inserir Hambúrguer"
+            on_press: root.inserir()
+        Button:
+            text: "Voltar"
+            on_press: root.voltar()
+
+
 
 <RegistrarPedidoScreen>:
     id_cliente: id_cliente
     nome_hamburguer: nome_hamburguer
     quantidade: quantidade
     tamanho: tamanho
-    valor_total: valor_total
     data_hora: data_hora
     BoxLayout:
         orientation: 'vertical'
@@ -132,9 +157,7 @@
             id: tamanho
             text: "Tamanho"
             values: ["small", "duplo", "normal"]
-        TextInput:
-            id: valor_total
-            hint_text: "Valor Total"
+            on_text: root.atualizar_preco(self.text)
         TextInput:
             id: data_hora
             hint_text: "Data e Hora"

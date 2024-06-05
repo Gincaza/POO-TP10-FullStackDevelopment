@@ -91,6 +91,26 @@ class RegistrarPedidoScreen(Screen):
 
     def on_enter(self, *args):
         self.nome_hamburguer.values = self.get_hamburgueres()
+    
+    def calcular_preco(self):
+        preco_base = float(self.valor_total.text)
+
+        if self.tamanho.text == "duplo":
+            return preco_base * 2
+        elif self.tamanho.text == "small":
+            return preco_base * 0.8
+        else:
+            return preco_base
+    
+    def atualizar_preco(self, tamanho):
+        preco_base = float(self.valor_total.text)
+
+        if tamanho == "duplo":
+            self.valor_total.text = str(preco_base * 2)
+        elif tamanho == "small":
+            self.valor_total.text = str(preco_base * 0.8)
+        else:
+            self.valor_total.text = str(preco_base)
 
     def get_hamburgueres(self):
         url = "http://127.0.0.1:5000/hamburguer"
@@ -117,7 +137,7 @@ class RegistrarPedidoScreen(Screen):
             "nome_hamburguer": self.nome_hamburguer.text,
             "quantidade": self.quantidade.text,
             "tamanho": self.tamanho.text,
-            "valor_total": self.valor_total.text,
+            "valor_total": self.calcular_preco(),
             "data_hora": self.data_hora.text
         }
 
@@ -180,7 +200,7 @@ class ObterHamburgueresScreen(Screen):
             if response.status_code == 200:
                 hamburgueres = response.json()
 
-                hamburgueres_texto = "\n".join([f"Nome: {hamburguer['nome_hamburguer']}, Ingredientes: {hamburguer['ingredientes']}" for hamburguer in hamburgueres])
+                hamburgueres_texto = "\n".join([f"Nome: {hamburguer['nome_hamburguer']}, Ingredientes: {hamburguer['ingredientes']}, Preço: {hamburguer['preco_base']}" for hamburguer in hamburgueres])
             
                 self.hamburgueres_label.text = hamburgueres_texto
             else:
@@ -190,6 +210,31 @@ class ObterHamburgueresScreen(Screen):
     
     def voltar(self):
         self.manager.current = 'hamburgueres'
+
+class InserirHamburguerScreen(Screen):
+    nome_hamburguer = ObjectProperty(None)
+    ingredientes = ObjectProperty(None)
+    preco_base = ObjectProperty(None)
+
+    def voltar(self):
+        self.manager.current = 'hamburgueres'
+    
+    def inserir(self):
+        url = "http://127.0.0.1:5000/hamburguer"
+        data = {
+            "nome_hamburguer": self.nome_hamburguer.text,
+            "ingredientes": self.ingredientes.text,
+            "preco_base": self.preco_base.text
+        }
+        try:
+            response = requests.post(url, json=data)
+            if response.status_code == 201:
+                print("Hamburguer inserido com sucesso!")
+                self.manager.current = 'hamburgueres'
+            else:
+                print("Falha ao inserir hamburguer")
+        except requests.exceptions.RequestException as e:
+            print(f"Error: {e}")
 
 
 Builder.load_file('login.kv')
@@ -207,6 +252,7 @@ class LoginApp(App):
         sm.add_widget(ObterClientesScreen(name='obter_clientes'))
         sm.add_widget(RegistrarPedidoScreen(name='registrar_pedido'))
         sm.add_widget(ObterHamburgueresScreen(name='obter_hamburgueres'))
+        sm.add_widget(InserirHamburguerScreen(name='inserir_hamburguer'))
         return sm
 
 

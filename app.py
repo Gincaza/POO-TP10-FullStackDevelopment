@@ -150,6 +150,7 @@ def obter_tabela_hamburguer():
             dados_linha = {
                 "nome_hamburguer": linha[0],
                 "ingredientes": linha[1],
+                "preco_base": linha[2],
             }
             dados_linhas.append(dados_linha)
 
@@ -164,10 +165,11 @@ def inserir_hamburguer():
     dados = request.json
     nome_hamburguer = dados.get("nome_hamburguer")
     ingredientes = dados.get("ingredientes")
+    preco_base = dados.get("preco_base")
 
     try:
         database_context.insert_hamburguer(
-            nome_hamburguer=nome_hamburguer, ingredientes=ingredientes
+            nome_hamburguer=nome_hamburguer, ingredientes=ingredientes, preco_base=preco_base
         )
         hamburguer_verificado = database_context.get_hamburguer(
             nome_hamburguer=nome_hamburguer, ingredientes=ingredientes
@@ -176,6 +178,7 @@ def inserir_hamburguer():
         dados_hamburguer = {
             "nome_hamburguer": hamburguer_verificado[0],
             "ingredientes": hamburguer_verificado[1],
+            "preco_base": hamburguer_verificado[2],
         }
         return jsonify(
             {"message": "Hamburguer inserido com sucesso!", "dados": dados_hamburguer}

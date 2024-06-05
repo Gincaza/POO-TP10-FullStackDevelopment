@@ -18,7 +18,8 @@ class DatabaseManager:
 
                     CREATE TABLE IF NOT EXISTS hamburgueres (
                         nome_hamburguer TEXT PRIMARY KEY,
-                        ingredientes TEXT
+                        ingredientes TEXT,
+                        preco_base REAL
                     );
 
                     CREATE TABLE IF NOT EXISTS pedidos (
@@ -135,12 +136,12 @@ class DatabaseManager:
             raise Exception(f"Erro ao deletar cliente: {e}")
 
     # Hamburguers
-    def insert_hamburguer(self, nome_hamburguer, ingredientes):
+    def insert_hamburguer(self, nome_hamburguer, ingredientes, preco_base):
         try:
             with sqlite3.connect(f"{self.__databasename}.db") as conn:
-                sql = "INSERT INTO hamburgueres (nome_hamburguer, ingredientes) VALUES (?, ?);"
+                sql = "INSERT INTO hamburgueres (nome_hamburguer, ingredientes, preco_base) VALUES (?, ?, ?);"
                 with closing(conn.cursor()) as cursor:
-                    cursor.execute(sql, (nome_hamburguer, ingredientes))
+                    cursor.execute(sql, (nome_hamburguer, ingredientes, preco_base))
                 conn.commit()
         except sqlite3.Error as e:
             raise Exception(f"Erro ao inserir hamburguer: {e}")
@@ -205,9 +206,9 @@ class DatabaseManager:
             self.insert_cliente("Bruno", "Porto", "912345678")
             self.insert_cliente("Carla", "Coimbra", "913456789")
 
-            self.insert_hamburguer("Cheeseburger", "Bread, Meat, Cheese, Lettuce, Tomato")
-            self.insert_hamburguer("Bacon Burger", "Bread, Meat, Bacon, Cheese, BBQ Sauce")
-            self.insert_hamburguer("Veggie Burger", "Bread, Veggie Burger, Lettuce, Tomato, Special Sauce")
+            self.insert_hamburguer("Cheeseburger", "Bread, Meat, Cheese, Lettuce, Tomato", 12.50)
+            self.insert_hamburguer("Bacon Burger", "Bread, Meat, Bacon, Cheese, BBQ Sauce", 8.75)
+            self.insert_hamburguer("Veggie Burger", "Bread, Veggie Burger, Lettuce, Tomato, Special Sauce", 15.00)
 
             now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             self.insert_pedido(1, "Cheeseburger", 2, "normal", 12.50, now)
