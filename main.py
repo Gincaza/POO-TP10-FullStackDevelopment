@@ -74,6 +74,9 @@ class AdicionarClienteScreen(Screen):
 class HamburgueresScreen(Screen):
     def obter_hamburgueres(self):
         self.manager.current = 'obter_hamburgueres'
+    
+    def inserir_hamburguer(self):
+        self.manager.current = 'inserir_hamburguer'
 
 
 class PedidosScreen(Screen):
