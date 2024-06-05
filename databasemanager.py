@@ -214,6 +214,8 @@ class DatabaseManager:
 
     # Utilitários
     def get_table(self, table):
+        if not table:
+            raise ValueError("Nome da tabela não fornecido")
         try:
             with sqlite3.connect(f"{self.__databasename}.db") as conn:
                 with closing(conn.cursor()) as cursor:
@@ -221,7 +223,7 @@ class DatabaseManager:
                     rows = cursor.fetchall()
                     return rows
         except sqlite3.Error as e:
-            raise Exception(f"Erro ao buscar tabela {table}: {e}")
+            raise Exception(f"Error procurando a tabela {table}: {e}")
 
     def populate_database(self):
         try:
