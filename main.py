@@ -43,6 +43,9 @@ class ClientesScreen(Screen):
 
     def adicionar_cliente(self):
         self.manager.current = 'adicionar_cliente'
+    
+    def deletar_cliente(self):
+        self.manager.current = 'deletar_cliente'
 
 
 class AdicionarClienteScreen(Screen):
@@ -65,7 +68,7 @@ class AdicionarClienteScreen(Screen):
             response = requests.post(url, json=data)
             if response.status_code == 201:
                 print("Cliente adicionado com sucesso!")
-                self.manager.current = 'main'
+                self.manager.current = 'clientes'
             else:
                 print("Falha ao adicionar o cliente")
         except requests.exceptions.RequestException as e:
@@ -164,6 +167,23 @@ class ObterClientesScreen(Screen):
     def voltar(self):
         self.manager.current = 'clientes'
 
+class DeletarClienteScreen(Screen):
+    def voltar(self):
+        self.manager.current = 'clientes'
+    
+    def deletar(self, id_cliente):
+        url = f"http://127.0.0.1:5000/cliente"
+        data = {"cliente_id": id_cliente}
+        try:
+            response = requests.delete(url, json=data)
+            if response.status_code == 201:
+                print("Cliente deletado com sucesso!")
+                self.manager.current = 'clientes'
+            else:
+                print("Falha ao deletar o cliente")
+        except requests.exceptions.RequestException as e:
+            print(f"Error: {e}")
+
 class ObterHamburgueresScreen(Screen):
     hamburgueres_label = ObjectProperty(None)
 
@@ -234,9 +254,11 @@ class LoginApp(App):
         sm.add_widget(RegistrarPedidoScreen(name='registrar_pedido'))
         sm.add_widget(ObterHamburgueresScreen(name='obter_hamburgueres'))
         sm.add_widget(InserirHamburguerScreen(name='inserir_hamburguer'))
+        sm.add_widget(DeletarClienteScreen(name='deletar_cliente'))
         return sm
 
 
 if __name__ == "__main__":
     LoginApp().run()
+
 

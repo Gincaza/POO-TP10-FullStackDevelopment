@@ -50,6 +50,9 @@
             text: "Adicionar Cliente"
             on_press: root.adicionar_cliente()
         Button:
+            text: "Deletar Cliente"
+            on_press: root.deletar_cliente()
+        Button:
             text: "Voltar"
             on_press: root.manager.current = 'main'
 
@@ -173,3 +176,31 @@
         Button:
             text: "Voltar"
             on_press: root.manager.current = 'main'
+
+<DeletarClienteScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 10
+        spacing: 10
+
+        Label:
+            text: "Deletar Cliente"
+            font_size: 24
+
+        TextInput:
+            id: id_cliente
+            hint_text: "ID do Cliente"
+            multiline: False
+            input_filter: 'int'
+
+        BoxLayout:
+            spacing: 10
+
+            Button:
+                text: "Deletar"
+                on_press: root.deletar(id_cliente.text)
+
+            Button:
+                text: "Voltar"
+                on_press: root.voltar()
+
