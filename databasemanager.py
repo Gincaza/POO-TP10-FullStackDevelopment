@@ -236,21 +236,17 @@ class DatabaseManager:
                 ("Bacon Burger", "Bread, Meat, Bacon, Cheese, BBQ Sauce", 8.75),
                 ("Veggie Burger", "Bread, Veggie Burger, Lettuce, Tomato, Special Sauce", 15.00)
             ]
-            orders = [
-                (1, "Cheeseburger", 2, "normal", 12.50),
-                (2, "Bacon Burger", 1, "duplo", 8.75),
-                (3, "Veggie Burger", 3, "normal", 15.00)
-            ]
 
             with sqlite3.connect(f"{self.__databasename}.db") as conn:
+                cursor = conn.cursor()
                 for client in clients:
                     self.insert_cliente(*client)
                 for burger in burgers:
                     self.insert_hamburguer(*burger)
                 now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                for order in orders:
-                    self.insert_pedido(*order, now)
+                
                 self.insert_empregado("Gustavo Cruz", "mothnue", "password123!")
+                cursor.close()
             print("Banco de dados populado com sucesso.")
         except sqlite3.Error as e:
             raise Exception(f"Erro ao popular banco de dados: {e}")
