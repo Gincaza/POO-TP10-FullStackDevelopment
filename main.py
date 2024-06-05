@@ -81,6 +81,9 @@ class HamburgueresScreen(Screen):
     
     def inserir_hamburguer(self):
         self.manager.current = 'inserir_hamburguer'
+    
+    def deletar_hamburguer(self):
+        self.manager.current = 'deletar_hamburguer'
 
 
 class PedidosScreen(Screen):
@@ -219,7 +222,7 @@ class InserirHamburguerScreen(Screen):
 
     def voltar(self):
         self.manager.current = 'hamburgueres'
-    
+      
     def inserir(self):
         url = "http://127.0.0.1:5000/hamburguer"
         data = {
@@ -234,6 +237,42 @@ class InserirHamburguerScreen(Screen):
                 self.manager.current = 'hamburgueres'
             else:
                 print("Falha ao inserir hamburguer")
+        except requests.exceptions.RequestException as e:
+            print(f"Error: {e}")
+
+class DeleterHamburguerScreen(Screen):
+    def voltar(self):
+        self.manager.current = 'hamburgueres'
+    
+    def obter_hamburgueres(self):
+        """
+        obtem a lista de hamburgueres do servidor e atualiza o rótulo na tela de hamburgueres.
+        """
+        url = "http://127.0.0.1:5000/hamburguer"
+        try:
+            response = requests.get(url)
+
+            if response.status_code == 200:
+                hamburgueres = response.json()
+
+                hamburgueres_texto = "\n".join([f"Nome: {hamburguer['nome_hamburguer']}" for hamburguer in hamburgueres])
+            
+                self.hamburgueres_label.text = hamburgueres_texto
+            else:
+                print(f"Failed to obtain hamburgueres: {response.text}")
+        except requests.exceptions.RequestException as e:
+            print(f"Error: {e}")
+    
+    def deletar(self, id_hamburguer):
+        url = f"http://127.0.0.1:5000/hamburguer"
+        data = {"hamburguer_id": id_hamburguer}
+        try:
+            response = requests.delete(url, json=data)
+            if response.status_code == 201:
+                print("Hamburguer deletado com sucesso!")
+                self.manager.current = 'hamburgueres'
+            else:
+                print(f"Falha ao deletar o hamburguer: {response.text}")
         except requests.exceptions.RequestException as e:
             print(f"Error: {e}")
 
@@ -255,6 +294,7 @@ class LoginApp(App):
         sm.add_widget(ObterHamburgueresScreen(name='obter_hamburgueres'))
         sm.add_widget(InserirHamburguerScreen(name='inserir_hamburguer'))
         sm.add_widget(DeletarClienteScreen(name='deletar_cliente'))
+        sm.add_widget(DeleterHamburguerScreen(name='deletar_hamburguer'))
         return sm
 
 

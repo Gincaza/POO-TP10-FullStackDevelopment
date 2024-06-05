@@ -100,6 +100,9 @@
             text: "Inserir Hamburguer"
             on_press: root.inserir_hamburguer()
         Button:
+            text: "Deletar Hamburguer"
+            on_press: root.deletar_hamburguer()
+        Button:
             text: "Voltar"
             on_press: root.manager.current = 'main'
 
@@ -203,4 +206,24 @@
             Button:
                 text: "Voltar"
                 on_press: root.voltar()
+
+<DeleterHamburguerScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        Spinner:
+            id: hamburguer_spinner
+            text: 'Selecione um hambúrguer'
+            values: app.hamburgueres_array
+            on_text: root.on_hamburguer_selected(self.text)
+        Button:
+            text: 'Deletar'
+            on_release: root.deletar(root.selected_hamburguer)
+        Button:
+            text: 'Voltar'
+            on_release: root.voltar()
+
+
+    def on_hamburguer_selected(self, text):
+        self.selected_hamburguer = text
+
 
