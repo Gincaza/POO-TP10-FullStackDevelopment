@@ -263,8 +263,8 @@ def register():
         existing_user = database_context.get_empregado(username=username)
         if existing_user:
             return jsonify({"erro": "Nome de usuário já está em uso"}), 400
-    except Exception as e:
-        return jsonify({"erro": str(e)}), 500
+    except Exception:
+        return jsonify({"erro": "Erro ao verificar usuário existente"}), 500
 
     try:
         database_context.insert_empregado(nome=nome, username=username, senha=senha)
@@ -274,8 +274,8 @@ def register():
             return jsonify({"message": "Registrado com sucesso!"}), 201
         else:
             return jsonify({"erro": "Erro durante o registro. Tente novamente."}), 500
-    except Exception as e:
-        return jsonify({"erro": str(e)}), 500
+    except Exception:
+        return jsonify({"erro": "Erro ao registrar usuário"}), 500
 
 
 @app.route("/pedido", methods=["POST"])
