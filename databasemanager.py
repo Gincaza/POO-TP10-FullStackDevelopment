@@ -193,6 +193,17 @@ class DatabaseManager:
     # Pedidos
     def insert_pedido(self, id_cliente, nome_hamburguer, quantidade, tamanho, valor_total, data_hora=None):
         try:
+            if not id_cliente:
+                raise ValueError("Id do cliente não fornecido")
+            if not nome_hamburguer:
+                raise ValueError("Nome do hamburguer não fornecido")
+            if not quantidade:
+                raise ValueError("Quantidade não fornecida")
+            if not tamanho:
+                raise ValueError("Tamanho não fornecido")
+            if not valor_total:
+                raise ValueError("Valor total não fornecido")
+
             with sqlite3.connect(f"{self.__databasename}.db") as conn:
                 sql = "INSERT INTO pedidos (id_cliente, nome_hamburguer, quantidade, tamanho, data_hora, valor_total) VALUES (?, ?, ?, ?, ?, ?);"
                 with closing(conn.cursor()) as cursor:
