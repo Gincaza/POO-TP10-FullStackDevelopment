@@ -171,18 +171,24 @@ def obter_tabela_hamburguer():
 
 @app.route("/hamburguer", methods=["POST"])
 def inserir_hamburguer():
-    dados = request.json
-    nome_hamburguer = dados.get("nome_hamburguer")
-    ingredientes = dados.get("ingredientes")
-    preco_base = dados.get("preco_base")
-
     try:
+        dados = request.json
+        nome_hamburguer = dados.get("nome_hamburguer")
+        ingredientes = dados.get("ingredientes")
+        preco_base = dados.get("preco_base")
+
+        if not nome_hamburguer or not ingredientes or not preco_base:
+            return jsonify({"error": "Dados incompletos"}), 400
+
         database_context.insert_hamburguer(
             nome_hamburguer=nome_hamburguer, ingredientes=ingredientes, preco_base=preco_base
         )
         hamburguer_verificado = database_context.get_hamburguer(
             nome_hamburguer=nome_hamburguer, ingredientes=ingredientes
         )
+
+        if not hamburguer_verificado:
+            return jsonify({"error": "Hamburguer não inserido com sucesso"}), 500
 
         dados_hamburguer = {
             "nome_hamburguer": hamburguer_verificado[0],
@@ -193,7 +199,7 @@ def inserir_hamburguer():
             {"message": "Hamburguer inserido com sucesso!", "dados": dados_hamburguer}
         ), 201
     except Exception as e:
-        return jsonify({"error": str(e)}), 400
+        return jsonify({"error": str(e)}), 500
 
 
 @app.route("/hamburguer", methods=["DELETE"])
