@@ -54,3 +54,25 @@
         Button:
             text: 'Log Out'
             on_press: app.root.current = 'login'
+
+<ClientesScreen>:
+    clientes_label: clientes_label
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 20
+        spacing: 10
+
+        Label:
+            text: 'Clientes Obtidos'
+
+        ScrollView:
+            Label:
+                id: clientes_label
+                text: ''
+                size_hint_y: None
+                height: self.texture_size[1]
+
+        Button:
+            text: 'Voltar'
+            on_press: app.root.current = 'main'

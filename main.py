@@ -1,6 +1,7 @@
 from kivy.uix.screenmanager import Screen, ScreenManager
 from kivy.app import App
 from kivy.lang import Builder
+from kivy.properties import ObjectProperty
 import requests
 import json
 
@@ -17,7 +18,7 @@ class LoginScreen(Screen):
             response = requests.post(url, json=data)
             if response.status_code == 200:
                 print("Login successful")
-                self.manager.current = "main"
+                self.manager.current = 'main'
             else:
                 print("Login failed")
         except requests.exceptions.RequestException as e:
@@ -25,14 +26,27 @@ class LoginScreen(Screen):
 
 class MainScreen(Screen):
     def obter_clientes(self):
+        """
+        obtem a lista de clientes do servidor e atualiza o rótulo na tela de clientes.
+        """
         url = "http://127.0.0.1:5000/cliente"
         try:
             response = requests.get(url)
+
             if response.status_code == 200:
                 clientes = response.json()
-                print("Clientes:", json.dumps(clientes, indent=4))
+
+                # Format each client as a JSON string with indentation
+                clientes_texto = "\n".join([json.dumps(cliente, indent=4) for cliente in clientes])
+                
+                # Update the label on the clientes screen
+                self.manager.get_screen('clientes').clientes_label.text = clientes_texto
+                
+                # Switch to the clientes screen
+                self.manager.current = 'clientes'
             else:
                 print("Failed to obtain clients")
+
         except requests.exceptions.RequestException as e:
             print(f"Error: {e}")
 
@@ -83,11 +97,15 @@ class MainScreen(Screen):
         except requests.exceptions.RequestException as e:
             print(f"Error: {e}")
 
+class ClientesScreen(Screen):
+    clientes_label = ObjectProperty(None)
+
 class LoginApp(App):
     def build(self):
         sm = ScreenManager()
         sm.add_widget(LoginScreen(name='login'))
         sm.add_widget(MainScreen(name='main'))
+        sm.add_widget(ClientesScreen(name='clientes'))
         return sm
 
 if __name__ == "__main__":
