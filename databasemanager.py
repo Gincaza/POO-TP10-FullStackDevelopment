@@ -63,6 +63,9 @@ class DatabaseManager:
             raise Exception(f"Erro ao inserir empregado: {e}")
 
     def verify_empregado(self, username, senha):
+        if not username or not senha:
+            raise ValueError("Username e senha devem ser fornecidos")
+
         try:
             with sqlite3.connect(f"{self.__databasename}.db") as conn:
                 sql = "SELECT senha FROM empregados WHERE username = ?"
