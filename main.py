@@ -215,6 +215,9 @@ class DeletarClienteScreen(Screen):
     def deletar(self):
         url = f"http://127.0.0.1:5000/cliente"
         cliente_selecionado = self.cliente_id.text
+        if not cliente_selecionado or cliente_selecionado == "ID do Cliente":
+            print("Error: precisa especificar um id_cliente")
+            return
         _, id_cliente = cliente_selecionado.split(" (ID: ")
         id_cliente = id_cliente[:-1]
         data = {"cliente_id": id_cliente}
