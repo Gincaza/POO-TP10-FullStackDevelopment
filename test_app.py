@@ -280,5 +280,34 @@ class TestObterTabelaHamburguerRoute(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.get_json(), {"erro": "Linha da tabela de hambúrgueres com menos de 3 colunas"})
 
+class TestInserirHamburguerRoute(unittest.TestCase):
+    def setUp(self):
+        # Configurar a aplicação para o modo de teste
+        app.config['TESTING'] = True
+        self.client = app.test_client()
+
+    @patch.object(database_context, 'insert_hamburguer')
+    @patch.object(database_context, 'get_hamburguer')
+    def test_inserir_hamburguer_sucesso(self, mock_get_hamburguer, mock_insert_hamburguer):
+        # Mocking a resposta do banco de dados
+        mock_insert_hamburguer.return_value = None  # insert_hamburguer não retorna nada
+        mock_get_hamburguer.return_value = ('Novo Hamburguer', 'Ingredientes', 15.99)
+
+        dados = {
+            "nome_hamburguer": "Novo Hamburguer",
+            "ingredientes": "Ingredientes",
+            "preco_base": 15.99
+        }
+
+        response = self.client.post('/hamburguer', json=dados)
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.get_json(), {
+            "message": "Hamburguer inserido com sucesso!",
+            "dados": {
+                "nome_hamburguer": "Novo Hamburguer",
+                "ingredientes": "Ingredientes",
+                "preco_base": 15.99
+            }
+        })
 if __name__ == '__main__':
     unittest.main()
