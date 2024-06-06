@@ -31,13 +31,16 @@
         orientation: 'vertical'
         Button:
             text: "Clientes"
-            on_press: root.manager.current = 'clientes'
+            on_press: root.ir_para_clientes()
         Button:
             text: "Hamburgueres"
-            on_press: root.manager.current = 'hamburgueres'
+            on_press: root.ir_para_hamburgueres()
         Button:
             text: "Pedidos"
-            on_press: root.manager.current = 'pedidos'
+            on_press: root.ir_para_pedidos()
+        Button:
+            text: "Log out"
+            on_press: root.logout()
 
 
 <ClientesScreen>:
@@ -142,15 +145,16 @@
 
 
 <RegistrarPedidoScreen>:
-    id_cliente: id_cliente
+    cliente: cliente
     nome_hamburguer: nome_hamburguer
     quantidade: quantidade
     tamanho: tamanho
     BoxLayout:
         orientation: 'vertical'
-        TextInput:
-            id: id_cliente
-            hint_text: "ID do Cliente"
+        Spinner:
+            id: cliente
+            hint_text: "Cliente"
+            values: []
         Spinner:
             id: nome_hamburguer
             text: "Nome do Hamburguer"
@@ -217,6 +221,7 @@
             values: []
         Button:
             text: 'Deletar'
+            on_release: root.deletar(nome_hamburguer.text)
         Button:
             text: 'Voltar'
             on_release: root.voltar()
