@@ -25,12 +25,14 @@ class DatabaseManager:
                     CREATE TABLE IF NOT EXISTS pedidos (
                         id_pedido INTEGER PRIMARY KEY,
                         id_cliente INTEGER,
+                        nome_cliente TEXT,
                         nome_hamburguer TEXT,
                         quantidade INTEGER,
                         tamanho TEXT,
                         data_hora DATETIME DEFAULT CURRENT_TIMESTAMP,
                         valor_total REAL,
                         FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente),
+                        FOREIGN KEY (nome_cliente) REFERENCES clientes(nome),
                         FOREIGN KEY (nome_hamburguer) REFERENCES hamburgueres(nome_hamburguer)
                     );
 
@@ -190,7 +192,7 @@ class DatabaseManager:
             raise Exception(f"Erro ao deletar hamburguer: {e}")
 
     # Pedidos
-    def insert_pedido(self, id_cliente, nome_hamburguer, quantidade, tamanho, valor_total, data_hora=None):
+    def insert_pedido(self, id_cliente, nome_cliente, nome_hamburguer, quantidade, tamanho, valor_total, data_hora=None):
         try:
             if not id_cliente:
                 raise ValueError("Id do cliente não fornecido")
@@ -204,9 +206,9 @@ class DatabaseManager:
                 raise ValueError("Valor total não fornecido")
 
             with sqlite3.connect(f"{self.__databasename}.db") as conn:
-                sql = "INSERT INTO pedidos (id_cliente, nome_hamburguer, quantidade, tamanho, data_hora, valor_total) VALUES (?, ?, ?, ?, ?, ?);"
+                sql = "INSERT INTO pedidos (id_cliente, nome_cliente, nome_hamburguer, quantidade, tamanho, data_hora, valor_total) VALUES (?, ?, ?, ?, ?, ?, ?);"
                 with closing(conn.cursor()) as cursor:
-                    cursor.execute(sql, (id_cliente, nome_hamburguer, quantidade, tamanho, data_hora if data_hora else datetime.now().strftime("%Y-%m-%d %H:%M:%S"), valor_total))
+                    cursor.execute(sql, (id_cliente, nome_cliente, nome_hamburguer, quantidade, tamanho, data_hora if data_hora else datetime.now().strftime("%Y-%m-%d %H:%M:%S"), valor_total))
                 conn.commit()
         except sqlite3.Error as e:
             raise Exception(f"Erro ao inserir pedido: {e}")
