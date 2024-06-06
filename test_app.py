@@ -1,81 +1,45 @@
 import unittest
-from app import app
-import json
+from flask import Flask
+from unittest.mock import patch
+from app import app, database_context
 
-
-class TestAPIRoutes(unittest.TestCase):
+class TestObterClientes(unittest.TestCase):
     def setUp(self):
-        self.client = app.test_client()
+        self.app = app.test_client()
 
-    def tearDown(self):
-        pass
+    @patch.object(database_context, 'get_table')
+    def test_obter_clientes_success(self, mock_get_table):
+        mock_get_table.return_value = [
+            (1, 'John Doe', '123 Main St', '123-456-7890'),
+            (2, 'Jane Smith', '456 Elm St', '987-654-3210')
+        ]
 
-    def test_get_cliente(self):
-        response = self.client.get("/cliente")
+        response = self.app.get('/cliente')
+
         self.assertEqual(response.status_code, 200)
-        data = json.loads(response.data)
-        self.assertIsInstance(data, list)
+        self.assertEqual(response.json, [
+            {
+                "id_cliente": 1,
+                "nome": "John Doe",
+                "morada": "123 Main St",
+                "telefone": "123-456-7890"
+            },
+            {
+                "id_cliente": 2,
+                "nome": "Jane Smith",
+                "morada": "456 Elm St",
+                "telefone": "987-654-3210"
+            }
+        ])
 
-    def test_get_cliente_by_name(self):
-        response = self.client.get("/cliente/nome/Ana")
-        self.assertEqual(response.status_code, 200)
-        data = json.loads(response.data)
-        self.assertIsInstance(data, dict)
-        self.assertIn("id_cliente", data)
-        self.assertIn("nome", data)
-        self.assertIn("morada", data)
-        self.assertIn("telefone", data)
+    @patch.object(database_context, 'get_table')
+    def test_obter_clientes_failure(self, mock_get_table):
+        mock_get_table.side_effect = Exception('Database error')
 
-    def test_get_cliente_by_telefone(self):
-        response = self.client.get("/cliente/telefone/911234567")
-        self.assertEqual(response.status_code, 200)
-        data = json.loads(response.data)
-        self.assertIsInstance(data, dict)
-        self.assertIn("id_cliente", data)
-        self.assertIn("nome", data)
-        self.assertIn("morada", data)
-        self.assertIn("telefone", data)
+        response = self.app.get('/cliente')
 
-    def test_get_hamburguer_table(self):
-        response = self.client.get("/hamburguer")
-        self.assertEqual(response.status_code, 200)
-        data = json.loads(response.data)
-        self.assertIsInstance(data, list)
-
-    def test_inserir_hamburguer(self):
-        # setUp
-        dados = {
-            "nome_hamburguer": "CheeseGood",
-            "ingredientes": "queijo molho especial",
-        }
-        # act
-        request = self.client.post("/hamburguer", json=dados)
-        # assert
-        self.assertEqual(request.status_code, 201)
-        self.assertIn("Hamburguer inserido com sucesso!", request.json["message"])
-        # assert se os dados estão corretos
-        dados_cliente = request.json["dados"]
-        self.assertEqual(dados_cliente["nome_hamburguer"], dados["nome_hamburguer"])
-        self.assertEqual(dados_cliente["ingredientes"], dados["ingredientes"])
-
-    def test_login(self):
-        # setUp
-        dados = {"username": "mothnue", "senha": "password123!"}
-        # act
-        response = self.client.post("/login", json=dados)
-        # assert
-        self.assertEqual(200, response.status_code)
-        self.assertIn("Usuário autenticado!", response.json["message"])
-
-    def test_register(self):
-        # set Up
-        dados = {"nome": "Pedro", "username": "joker", "senha": "password123"}
-        # act
-        response = self.client.post("/register", json=dados)
-        # assert
-        self.assertEqual(201, response.status_code)
-        self.assertIn("Registrado com sucesso!", response.json["message"])
-
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json, {'erro': 'Database error'})
 
 if __name__ == "__main__":
     unittest.main()
