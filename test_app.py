@@ -219,5 +219,13 @@ class TestDeletarClienteRoute(unittest.TestCase):
         response = self.client.delete('/cliente', json=dados)
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.get_json(), {"erro": "Cliente não encontrado"})
+
+    def test_deletar_cliente_sem_cliente_id(self):
+        dados = {}
+
+        response = self.client.delete('/cliente', json=dados)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.get_json(), {"erro": "id_cliente é necessário"})
+
 if __name__ == '__main__':
     unittest.main()
