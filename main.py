@@ -36,6 +36,9 @@ class MainScreen(Screen):
 
     def ir_para_pedidos(self):
         self.manager.current = 'pedidos'
+    
+    def logout(self):
+        self.manager.current = 'login'
 
 
 class ClientesScreen(Screen):
@@ -93,6 +96,7 @@ class PedidosScreen(Screen):
 
 
 class RegistrarPedidoScreen(Screen):
+    cliente = ObjectProperty(None)
     nome_hamburguer = ObjectProperty(None)
     quantidade = ObjectProperty(None)
     tamanho = ObjectProperty(None)
@@ -135,28 +139,9 @@ class ObterClientesScreen(Screen):
     clientes_label = ObjectProperty(None)
 
     def on_enter(self, *args):
-
-    def obter_clientes(self):
-        """
-        obtem a lista de clientes do servidor e atualiza o rótulo na tela de clientes.
-        """
-        url = "http://127.0.0.1:5000/cliente"
-        try:
-            response = requests.get(url)
-
-            if response.status_code == 200:
-                clientes = response.json()
-
-                # Format each client as a JSON string with indentation
-                clientes_texto = "\n".join([f"Nome: {cliente['nome']}, Morada: {cliente['morada']}, Telefone: {cliente['telefone']}" for cliente in clientes])
-
-                # Update the label on the clientes screen
-                self.clientes_label.text = clientes_texto
-            else:
-                print("Failed to obtain clients")
-
-        except requests.exceptions.RequestException as e:
-            print(f"Error: {e}")
+        clientes = Operations().get_clientes()
+        clientes_texto = "\n".join([f"Nome: {cliente['nome']}, Morada: {cliente['morada']}, Telefone: {cliente['telefone']}" for cliente in clientes])
+        self.clientes_label.text = str(clientes_texto)
     
     def voltar(self):
         self.manager.current = 'clientes'
