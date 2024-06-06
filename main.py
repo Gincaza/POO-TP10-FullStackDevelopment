@@ -99,6 +99,12 @@ class HamburgueresScreen(Screen):
 class PedidosScreen(Screen):
     def registrar_pedidos(self):
         self.manager.current = 'registrar_pedido'
+    
+    def obter_pedidos(self):
+        self.manager.current = 'obter_pedidos'
+    
+    def voltar(self):
+        self.manager.current = 'main'
 
 
 class RegistrarPedidoScreen(Screen):
@@ -140,6 +146,22 @@ class RegistrarPedidoScreen(Screen):
         except requests.exceptions.RequestException as e:
             print(f"Error: {e}")
 
+class ObterPedidosScreen(Screen):
+    pedidos_label = ObjectProperty(None)
+
+    def on_enter(self, *args):
+        pedidos = Operations().get_pedidos()
+        pedidos_texto = self.formatar_pedidos(pedidos)
+        self.pedidos_label.text = pedidos_texto
+
+    def voltar(self):
+        self.manager.current = 'pedidos'
+
+    def formatar_pedidos(self, pedidos):
+        pedidos_formatados = ""
+        for pedido in pedidos['pedidos']:
+            pedidos_formatados += f"ID: {pedido[0]}, Cliente ID: {pedido[1]}, Nome Cliente: {pedido[2]}, Hamburguer: {pedido[3]}, Quantidade: {pedido[4]}, Tamanho: {pedido[5]}, Data/Hora: {pedido[6]}, Preço: {pedido[7]}\n"
+        return pedidos_formatados
 
 class ObterClientesScreen(Screen):
     clientes_label = ObjectProperty(None)

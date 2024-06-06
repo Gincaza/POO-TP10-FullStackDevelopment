@@ -252,6 +252,17 @@ def register():
     except Exception:
         return jsonify({"erro": "Erro ao registrar usuário"}), 500
 
+@app.route("/pedido", methods=["GET"])
+def get_pedidos():
+    pedidos = database_context.get_table("pedidos")
+
+    if not pedidos:
+        return jsonify({"erro": "Nenhum pedido encontrado"}), 404
+    
+    try:
+        return jsonify({"pedidos": pedidos}), 200
+    except Exception as e:
+        return jsonify({"erro": str(e)}), 500
 
 @app.route("/pedido", methods=["POST"])
 def registrar_pedido():

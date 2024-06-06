@@ -36,3 +36,17 @@ class Operations:
         except requests.exceptions.RequestException as e:
             print(f"Erro: {e}")
             return []
+    
+    def get_pedidos(self):
+        url = "http://127.0.0.1:5000/pedido"
+        try:
+            response = requests.get(url)
+            if response.status_code == 200:
+                pedidos = response.json()
+                return pedidos
+            else:
+                print("Falha ao obter pedidos")
+                return []
+        except requests.exceptions.RequestException as e:
+            print(f"Erro: {e}")
+            return []
