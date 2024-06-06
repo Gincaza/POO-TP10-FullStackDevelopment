@@ -134,5 +134,10 @@ class TestAtualizarClienteRoute(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.get_json(), {"erro": "telefone é necessário"})
 
+class TestInserirClienteRoute(unittest.TestCase):
+    def setUp(self):
+        # Configurar a aplicação para o modo de teste
+        app.config['TESTING'] = True
+        self.client = app.test_client()
 if __name__ == '__main__':
     unittest.main()
