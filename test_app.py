@@ -267,5 +267,18 @@ class TestObterTabelaHamburguerRoute(unittest.TestCase):
         response = self.client.get('/hamburguer')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.get_json(), {"erro": "Linha vazia encontrada na tabela de hambúrgueres"})
+
+    @patch.object(database_context, 'get_table')
+    def test_obter_tabela_hamburguer_linha_menos_de_3_colunas(self, mock_get_table):
+        # Mocking uma linha com menos de 3 colunas no banco de dados
+        mock_get_table.return_value = [
+            ('Hamburguer 1', 'Ingredientes 1'),
+            ('Hamburguer 2',)
+        ]
+
+        response = self.client.get('/hamburguer')
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.get_json(), {"erro": "Linha da tabela de hambúrgueres com menos de 3 colunas"})
+
 if __name__ == '__main__':
     unittest.main()
