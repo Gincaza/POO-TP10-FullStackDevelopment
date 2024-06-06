@@ -173,5 +173,6 @@ class TestInserirClienteRoute(unittest.TestCase):
 
         response = self.client.post('/cliente', json=dados)
         self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.get_json(), {"erro": "nome é necessário"})
 if __name__ == '__main__':
     unittest.main()
