@@ -93,36 +93,27 @@ class PedidosScreen(Screen):
 
 
 class RegistrarPedidoScreen(Screen):
-    id_cliente = ObjectProperty(None)
     nome_hamburguer = ObjectProperty(None)
     quantidade = ObjectProperty(None)
     tamanho = ObjectProperty(None)
 
     def on_enter(self, *args):
-        self.nome_hamburguer.values = self.get_hamburgueres()
-
-    def get_hamburgueres(self):
-        url = "http://127.0.0.1:5000/hamburguer"
-        try:
-            response = requests.get(url)
-            if response.status_code == 200:
-                hamburgueres = response.json()
-                # Retorna apenas os nomes dos hambúrgueres
-                return [hamburguer['nome_hamburguer'] for hamburguer in hamburgueres]
-            else:
-                print("Falha ao obter hambúrgueres")
-                return []
-        except requests.exceptions.RequestException as e:
-            print(f"Erro: {e}")
-            return []
+        self.nome_hamburguer.values = Operations().get_hamburgueres()
+        clientes = Operations().get_clientes()
+        self.cliente.values = [(f"{cliente['nome']} (ID: {cliente['id_cliente']})") for cliente in clientes]
 
     def voltar(self):
         self.manager.current = 'pedidos'
 
     def registrar(self):
         url = "http://127.0.0.1:5000/pedido"
+        cliente_selecionado = self.cliente.text
+        nome_cliente, id_cliente = cliente_selecionado.split(" (ID: ")
+        id_cliente = id_cliente[:-1]
+
         data = {
-            "id_cliente": self.id_cliente.text,
+            "id_cliente": id_cliente,
+            "nome_cliente": nome_cliente,
             "nome_hamburguer": self.nome_hamburguer.text,
             "quantidade": self.quantidade.text,
             "tamanho": self.tamanho.text,
