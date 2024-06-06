@@ -123,5 +123,16 @@ class TestAtualizarClienteRoute(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.get_json(), {"erro": "morada é necessário"})
 
+    def test_atualizar_cliente_faltando_telefone(self):
+        dados = {
+            "id_cliente": 1,
+            "nome": "Cliente Atualizado",
+            "morada": "Nova Morada"
+        }
+
+        response = self.client.put('/cliente', json=dados)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.get_json(), {"erro": "telefone é necessário"})
+
 if __name__ == '__main__':
     unittest.main()
