@@ -94,6 +94,36 @@
             text: "Deletar Cliente"
             on_press: root.deletar_cliente()
         Button:
+            text: "Atualizar Cliente"
+            on_press: root.update_cliente()
+        Button:
+            text: "Voltar"
+            on_press: root.voltar()
+
+<UpdateClientScreen>:
+    cliente_id: cliente_id
+    nome: nome
+    morada: morada
+    telefone: telefone
+    BoxLayout:
+        orientation: 'vertical'
+        Spinner:
+            id: cliente_id
+            text: "ID do Cliente"
+            values: []
+        TextInput:
+            id: nome
+            hint_text: "Nome"
+        TextInput:
+            id: morada
+            hint_text: "Morada"
+        TextInput:
+            id: telefone
+            hint_text: "Telefone"
+        Button:
+            text: "Atualizar Cliente"
+            on_press: root.atualizar()
+        Button:
             text: "Voltar"
             on_press: root.voltar()
 

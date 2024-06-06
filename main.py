@@ -76,6 +76,9 @@ class ClientesScreen(Screen):
     def deletar_cliente(self):
         self.manager.current = 'deletar_cliente'
     
+    def update_cliente(self):
+        self.manager.current = 'update_client'
+    
     def voltar(self):
         self.manager.current = 'main'
 
@@ -216,6 +219,38 @@ class DeletarClienteScreen(Screen):
         except requests.exceptions.RequestException as e:
             print(f"Error: {e}")
 
+
+class UpdateClientScreen(Screen):
+    cliente_id = ObjectProperty(None)
+    nome = ObjectProperty(None)
+    morada = ObjectProperty(None)
+    telefone = ObjectProperty(None)
+
+    def on_enter(self, *args):
+        clientes = Operations().get_clientes()
+        self.cliente_id.values = [(f"{cliente['id_cliente']}") for cliente in clientes]
+
+    def voltar(self):
+        self.manager.current = 'clientes'
+
+    def atualizar(self):
+        url = f"http://127.0.0.1:5000/cliente"
+        data = {
+            "id_cliente": self.cliente_id.text,
+            "nome": self.nome.text,
+            "morada": self.morada.text,
+            "telefone": self.telefone.text,
+        }
+
+        try:
+            response = requests.put(url, json=data)
+            if response.status_code == 201:
+                print("Cliente atualizado com sucesso!")
+                self.manager.current = 'clientes'
+            else:
+                print("Falha ao atualizar o cliente")
+        except requests.exceptions.RequestException as e:
+            print(f"Error: {e}")
 class ObterHamburgueresScreen(Screen):
     hamburgueres_label = ObjectProperty(None)
 
@@ -327,6 +362,7 @@ class LoginApp(App):
         sm.add_widget(DeletarClienteScreen(name='deletar_cliente'))
         sm.add_widget(DeleterHamburguerScreen(name='deletar_hamburguer'))
         sm.add_widget(ObterPedidosScreen(name='obter_pedidos'))
+        sm.add_widget(UpdateClientScreen(name='update_client'))
         return sm
 
 
