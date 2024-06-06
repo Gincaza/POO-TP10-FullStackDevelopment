@@ -6,7 +6,7 @@ class Operations:
 
     def get_clientes(self):
         """
-        obtem a lista de clientes do servidor e atualiza o rótulo na tela de clientes.
+        obtem a lista de clientes e o retorna em array.
         """
         url = "http://127.0.0.1:5000/cliente"
         try:
@@ -15,11 +15,7 @@ class Operations:
             if response.status_code == 200:
                 clientes = response.json()
 
-                # Formata os clientes em string para o rótulo
-                clientes_texto = "\n".join([f"Nome: {cliente['nome']}, Morada: {cliente['morada']}, Telefone: {cliente['telefone']}" for cliente in clientes])
-
-                # Update the label on the clientes screen
-                return clientes_texto
+                return clientes
             else:
                 print("Failed to obtain clients")
 
