@@ -25,6 +25,31 @@ class LoginScreen(Screen):
                 print("Login failed")
         except requests.exceptions.RequestException as e:
             print(f"Error: {e}")
+    
+    def register(self):
+        self.manager.current = 'register'
+
+class RegisterScreen(Screen):
+    nome = ObjectProperty(None)
+    username = ObjectProperty(None)
+    password = ObjectProperty(None)
+
+    def register(self):
+        url = "http://127.0.0.1:5000/register"
+        data = {
+            "nome": self.nome.text,
+            "username": self.username.text,
+            "senha": self.password.text
+        }
+        try:
+            response = requests.post(url, json=data)
+            if response.status_code == 201:
+                print("Registration successful")
+                self.manager.current = 'login'
+            else:
+                print("Registration failed")
+        except requests.exceptions.RequestException as e:
+            print(f"Error: {e}")
 
 
 class MainScreen(Screen):
@@ -289,6 +314,7 @@ class LoginApp(App):
     def build(self):
         sm = ScreenManager()
         sm.add_widget(LoginScreen(name='login'))
+        sm.add_widget(RegisterScreen(name='register'))
         sm.add_widget(MainScreen(name='main'))
         sm.add_widget(ClientesScreen(name='clientes'))
         sm.add_widget(HamburgueresScreen(name='hamburgueres'))
