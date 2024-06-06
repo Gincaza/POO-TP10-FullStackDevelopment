@@ -206,5 +206,18 @@ class TestDeletarClienteRoute(unittest.TestCase):
                 "telefone": "123456789"
             }
         })
+
+    @patch.object(database_context, 'get_cliente')
+    def test_deletar_cliente_nao_encontrado(self, mock_get_cliente):
+        # Mocking que o cliente não é encontrado
+        mock_get_cliente.return_value = None
+
+        dados = {
+            "cliente_id": 1
+        }
+
+        response = self.client.delete('/cliente', json=dados)
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.get_json(), {"erro": "Cliente não encontrado"})
 if __name__ == '__main__':
     unittest.main()
