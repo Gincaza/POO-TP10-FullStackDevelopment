@@ -10,6 +10,9 @@ from operations import Operations
 
 
 class LoginScreen(Screen):
+    username = ObjectProperty(None)
+    password = ObjectProperty(None)
+    
     def login(self):
         url = "http://127.0.0.1:5000/login"
         data = {
