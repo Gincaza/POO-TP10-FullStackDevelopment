@@ -152,6 +152,9 @@ class RegistrarPedidoScreen(Screen):
     def registrar(self):
         url = "http://127.0.0.1:5000/pedido"
         cliente_selecionado = self.cliente.text
+        if not cliente_selecionado or cliente_selecionado == "Cliente":
+            print("Error: precisa especificar um id_cliente")
+            return
         nome_cliente, id_cliente = cliente_selecionado.split(" (ID: ")
         id_cliente = id_cliente[:-1]
 
