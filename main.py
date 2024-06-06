@@ -50,6 +50,9 @@ class ClientesScreen(Screen):
     
     def deletar_cliente(self):
         self.manager.current = 'deletar_cliente'
+    
+    def voltar(self):
+        self.manager.current = 'main'
 
 
 class AdicionarClienteScreen(Screen):
