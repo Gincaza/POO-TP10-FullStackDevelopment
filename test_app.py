@@ -227,5 +227,33 @@ class TestDeletarClienteRoute(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.get_json(), {"erro": "id_cliente é necessário"})
 
+class TestObterTabelaHamburguerRoute(unittest.TestCase):
+    def setUp(self):
+        # Configurar a aplicação para o modo de teste
+        app.config['TESTING'] = True
+        self.client = app.test_client()
+
+    @patch.object(database_context, 'get_table')
+    def test_obter_tabela_hamburguer_sucesso(self, mock_get_table):
+        # Mocking a resposta do banco de dados
+        mock_get_table.return_value = [
+            ('Hamburguer 1', 'Ingredientes 1', 10.99),
+            ('Hamburguer 2', 'Ingredientes 2', 12.99)
+        ]
+
+        response = self.client.get('/hamburguer')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get_json(), [
+            {
+                "nome_hamburguer": "Hamburguer 1",
+                "ingredientes": "Ingredientes 1",
+                "preco_base": 10.99
+            },
+            {
+                "nome_hamburguer": "Hamburguer 2",
+                "ingredientes": "Ingredientes 2",
+                "preco_base": 12.99
+            }
+        ])
 if __name__ == '__main__':
     unittest.main()
