@@ -203,11 +203,20 @@ class ObterClientesScreen(Screen):
         self.manager.current = 'clientes'
 
 class DeletarClienteScreen(Screen):
+    cliente_id = ObjectProperty(None)
+
+    def on_enter(self, *args):
+        clientes = Operations().get_clientes()
+        self.cliente_id.values = [(f"{cliente['nome']} (ID: {cliente['id_cliente']})") for cliente in clientes]
+
     def voltar(self):
         self.manager.current = 'clientes'
     
-    def deletar(self, id_cliente):
+    def deletar(self):
         url = f"http://127.0.0.1:5000/cliente"
+        cliente_selecionado = self.cliente_id.text
+        _, id_cliente = cliente_selecionado.split(" (ID: ")
+        id_cliente = id_cliente[:-1]
         data = {"cliente_id": id_cliente}
         try:
             response = requests.delete(url, json=data)

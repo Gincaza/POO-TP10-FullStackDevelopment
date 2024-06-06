@@ -267,32 +267,20 @@
             on_press: root.voltar()
 
 <DeletarClienteScreen>:
+    cliente_id: cliente_id
     BoxLayout:
         orientation: 'vertical'
-        padding: 10
-        spacing: 10
-
-        Label:
+        Spinner:
+            id: cliente_id
+            text: "ID do Cliente"
+            values: []
+        Button:
             text: "Deletar Cliente"
-            font_size: 24
-
-        TextInput:
-            id: id_cliente
-            hint_text: "ID do Cliente"
-            multiline: False
-            input_filter: 'int'
-
-        BoxLayout:
-            spacing: 10
-
-            Button:
-                text: "Deletar"
-                on_press: root.deletar(id_cliente.text)
-
-            Button:
-                text: "Voltar"
-                on_press: root.voltar()
-
+            on_press: root.deletar()
+        Button:
+            text: "Voltar"
+            on_press: root.voltar()
+            
 <DeleterHamburguerScreen>:
     nome_hamburguer: nome_hamburguer
     BoxLayout:
