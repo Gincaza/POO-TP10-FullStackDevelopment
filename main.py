@@ -92,6 +92,9 @@ class HamburgueresScreen(Screen):
     def deletar_hamburguer(self):
         self.manager.current = 'deletar_hamburguer'
 
+    def voltar(self):
+        self.manager.current = 'main'
+
 
 class PedidosScreen(Screen):
     def registrar_pedidos(self):
@@ -275,6 +278,7 @@ class LoginApp(App):
         sm.add_widget(InserirHamburguerScreen(name='inserir_hamburguer'))
         sm.add_widget(DeletarClienteScreen(name='deletar_cliente'))
         sm.add_widget(DeleterHamburguerScreen(name='deletar_hamburguer'))
+        sm.add_widget(ObterPedidosScreen(name='obter_pedidos'))
         return sm
 
 
