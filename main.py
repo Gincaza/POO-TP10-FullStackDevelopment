@@ -6,6 +6,7 @@ from kivy.properties import ObjectProperty
 import requests
 import json
 from datetime import datetime
+from operations import Operations
 
 
 class LoginScreen(Screen):
@@ -143,7 +144,6 @@ class ObterClientesScreen(Screen):
     clientes_label = ObjectProperty(None)
 
     def on_enter(self, *args):
-        self.obter_clientes()
 
     def obter_clientes(self):
         """
