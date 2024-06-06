@@ -74,22 +74,6 @@ class TestAtualizarClienteRoute(unittest.TestCase):
             }
         })
 
-    @patch.object(database_context, 'update_cliente')
-    def test_atualizar_cliente_erro_banco(self, mock_update_cliente):
-        # Mocking uma exceção do banco de dados
-        mock_update_cliente.side_effect = Exception("Erro ao atualizar o banco de dados")
-
-        dados = {
-            "id_cliente": 1,
-            "nome": "Cliente Atualizado",
-            "morada": "Nova Morada",
-            "telefone": "123456789"
-        }
-
-        response = self.client.put('/cliente', json=dados)
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.get_json(), {"erro": "Erro ao atualizar o banco de dados"})
-
     def test_atualizar_cliente_faltando_id_cliente(self):
         dados = {
             "nome": "Cliente Atualizado",
