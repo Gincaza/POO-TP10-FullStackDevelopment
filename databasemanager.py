@@ -81,6 +81,21 @@ class DatabaseManager:
         except sqlite3.Error as e:
             raise Exception(f"Erro ao verificar empregado: {e}")
 
+    def get_empregado(self, username):
+        if not username:
+            raise ValueError("Username deve ser fornecido")
+
+        try:
+            with sqlite3.connect(f"{self.__databasename}.db") as conn:
+                cursor = conn.cursor()
+                query = "SELECT * FROM empregados WHERE username = ?"
+                cursor.execute(query, (username,))
+                result = cursor.fetchone()
+                return result
+        except sqlite3.Error as e:
+            raise Exception(f"Erro ao buscar empregado: {e}")
+
+
     # Clientes
     def insert_cliente(self, nome, morada, telefone):
         try:
@@ -149,6 +164,7 @@ class DatabaseManager:
                     cursor.execute(sql, (nome_hamburguer, ingredientes, preco_base))
                 conn.commit()
         except sqlite3.Error as e:
+            raise Exception(f"Erro ao inserir hamburguer: {e}")
             raise Exception(f"Erro ao inserir hamburguer: {e}")
 
     def get_hamburguer(self, nome_hamburguer=None, ingredientes=None):

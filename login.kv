@@ -26,6 +26,44 @@
             text: 'Login'
             on_press: root.login()
 
+        Button:
+            text: 'Register'
+            on_press: root.register()
+
+<RegisterScreen>:
+    nome: nome
+    username: username
+    password: password
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 20
+        spacing: 10
+
+        Label:
+            text: "Nome"
+        TextInput:
+            id: nome
+            multiline: False
+
+        Label:
+            text: 'Username'
+        TextInput:
+            id: username
+            multiline: False
+
+        Label:
+            text: 'Password'
+        TextInput:
+            id: password
+            multiline: False
+            password: True
+
+        Button:
+            text: 'Register'
+            on_press: root.register()
+
+
 <MainScreen>:
     BoxLayout:
         orientation: 'vertical'
