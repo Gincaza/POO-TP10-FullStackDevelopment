@@ -278,6 +278,7 @@ def register():
 def registrar_pedido():
     dados = request.json
     id_cliente = dados.get("id_cliente")
+    nome_cliente = dados.get("nome_cliente")
     nome_hamburguer = dados.get("nome_hamburguer")
     quantidade = dados.get("quantidade")
     tamanho = dados.get("tamanho")
@@ -287,9 +288,13 @@ def registrar_pedido():
         return jsonify({"erro": "Dados incompletos"}), 400
 
     try:
-        hamburguer_details = database_context.get_hamburguer(nome_hamburguer)
+        hamburguer_details = database_context.get_hamburguer(nome_hamburguer=nome_hamburguer)
         if not hamburguer_details:
             return jsonify({"erro": "Hamburguer não encontrado"}), 400
+    
+        cliente_details = database_context.get_cliente(id_cliente=id_cliente, nome=nome_cliente)
+        if not cliente_details:
+            return jsonify({"erro": "Cliente não encontrado"}), 400
 
         preco_hamburguer = float(hamburguer_details[2])
 
@@ -306,6 +311,7 @@ def registrar_pedido():
 
         database_context.insert_pedido(
             id_cliente,
+            nome_cliente,
             nome_hamburguer,
             quantidade,
             tamanho,
