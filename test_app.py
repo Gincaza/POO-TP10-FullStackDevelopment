@@ -139,5 +139,30 @@ class TestInserirClienteRoute(unittest.TestCase):
         # Configurar a aplicação para o modo de teste
         app.config['TESTING'] = True
         self.client = app.test_client()
+
+    @patch.object(database_context, 'insert_cliente')
+    @patch.object(database_context, 'get_cliente')
+    def test_inserir_cliente_sucesso(self, mock_get_cliente, mock_insert_cliente):
+        # Mocking a resposta do banco de dados
+        mock_insert_cliente.return_value = None  # insert_cliente não retorna nada
+        mock_get_cliente.return_value = (1, 'Novo Cliente', 'Morada', '123456789')
+
+        dados = {
+            "nome": "Novo Cliente",
+            "morada": "Morada",
+            "telefone": "123456789"
+        }
+
+        response = self.client.post('/cliente', json=dados)
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.get_json(), {
+            "mensagem": "Cliente criado com sucesso!",
+            "dados": {
+                "id_cliente": 1,
+                "nome": "Novo Cliente",
+                "morada": "Morada",
+                "telefone": "123456789"
+            }
+        })
 if __name__ == '__main__':
     unittest.main()
