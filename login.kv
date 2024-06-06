@@ -1,0 +1,227 @@
+<LoginScreen>:
+    username: username
+    password: password
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 20
+        spacing: 10
+
+        Label:
+            text: 'Username'
+
+        TextInput:
+            id: username
+            multiline: False
+
+        Label:
+            text: 'Password'
+
+        TextInput:
+            id: password
+            multiline: False
+            password: True
+
+        Button:
+            text: 'Login'
+            on_press: root.login()
+
+<MainScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        Button:
+            text: "Clientes"
+            on_press: root.ir_para_clientes()
+        Button:
+            text: "Hamburgueres"
+            on_press: root.ir_para_hamburgueres()
+        Button:
+            text: "Pedidos"
+            on_press: root.ir_para_pedidos()
+        Button:
+            text: "Log out"
+            on_press: root.logout()
+
+
+<ClientesScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        Button:
+            text: "Obter Clientes"
+            on_press: root.obter_clientes()
+        Button:
+            text: "Adicionar Cliente"
+            on_press: root.adicionar_cliente()
+        Button:
+            text: "Deletar Cliente"
+            on_press: root.deletar_cliente()
+        Button:
+            text: "Voltar"
+            on_press: root.manager.current = 'main'
+
+<AdicionarClienteScreen>:
+    nome: nome
+    morada: morada
+    telefone: telefone
+    BoxLayout:
+        orientation: 'vertical'
+        TextInput:
+            id: nome
+            hint_text: "Nome"
+        TextInput:
+            id: morada
+            hint_text: "Morada"
+        TextInput:
+            id: telefone
+            hint_text: "Telefone"
+        Button:
+            text: "Adicionar Cliente"
+            on_press: root.adicionar()
+        Button:
+            text: "Voltar"
+            on_press: root.voltar()
+
+<ObterClientesScreen>:
+    clientes_label: clientes_label
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            id: clientes_label
+            text: ""
+        Button:
+            text: "Voltar"
+            on_press: root.voltar()
+
+
+<HamburgueresScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        Button:
+            text: "Obter Hamburgueres"
+            on_press: root.obter_hamburgueres()
+        Button:
+            text: "Inserir Hamburguer"
+            on_press: root.inserir_hamburguer()
+        Button:
+            text: "Deletar Hamburguer"
+            on_press: root.deletar_hamburguer()
+        Button:
+            text: "Voltar"
+            on_press: root.manager.current = 'main'
+
+<ObterHamburgueresScreen>:
+    hamburgueres_label: hamburgueres_label
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            id: hamburgueres_label
+            text: ""
+        Button:
+            text: "Voltar"
+            on_press: root.voltar()
+
+<InserirHamburguerScreen>:
+    nome_hamburguer: nome_hamburguer
+    ingredientes: ingredientes
+    preco_base: preco_base
+    BoxLayout:
+        orientation: 'vertical'
+        TextInput:
+            id: nome_hamburguer
+            hint_text: "Nome do Hambúrguer"
+        TextInput:
+            id: ingredientes
+            hint_text: "Ingredientes"
+        TextInput:
+            id: preco_base
+            hint_text: "Preço Base"
+        Button:
+            text: "Inserir Hambúrguer"
+            on_press: root.inserir()
+        Button:
+            text: "Voltar"
+            on_press: root.voltar()
+
+
+
+<RegistrarPedidoScreen>:
+    cliente: cliente
+    nome_hamburguer: nome_hamburguer
+    quantidade: quantidade
+    tamanho: tamanho
+    BoxLayout:
+        orientation: 'vertical'
+        Spinner:
+            id: cliente
+            text: "Cliente"
+            values: []
+        Spinner:
+            id: nome_hamburguer
+            text: "Nome do Hamburguer"
+            values: []
+        TextInput:
+            id: quantidade
+            hint_text: "Quantidade"
+        Spinner:
+            id: tamanho
+            text: "Tamanho"
+            values: ["small", "duplo", "normal"]
+        Button:
+            text: "Registrar Pedido"
+            on_press: root.registrar()
+        Button:
+            text: "Voltar"
+            on_press: root.voltar()
+
+
+<PedidosScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        Button:
+            text: "Registrar Pedido"
+            on_press: root.registrar_pedidos()
+        Button:
+            text: "Voltar"
+            on_press: root.manager.current = 'main'
+
+<DeletarClienteScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 10
+        spacing: 10
+
+        Label:
+            text: "Deletar Cliente"
+            font_size: 24
+
+        TextInput:
+            id: id_cliente
+            hint_text: "ID do Cliente"
+            multiline: False
+            input_filter: 'int'
+
+        BoxLayout:
+            spacing: 10
+
+            Button:
+                text: "Deletar"
+                on_press: root.deletar(id_cliente.text)
+
+            Button:
+                text: "Voltar"
+                on_press: root.voltar()
+
+<DeleterHamburguerScreen>:
+    nome_hamburguer: nome_hamburguer
+    BoxLayout:
+        orientation: 'vertical'
+        Spinner:
+            id: nome_hamburguer
+            text: 'Selecione um hambúrguer'
+            values: []
+        Button:
+            text: 'Deletar'
+            on_release: root.deletar(nome_hamburguer.text)
+        Button:
+            text: 'Voltar'
+            on_release: root.voltar()

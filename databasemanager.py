@@ -18,18 +18,21 @@ class DatabaseManager:
 
                     CREATE TABLE IF NOT EXISTS hamburgueres (
                         nome_hamburguer TEXT PRIMARY KEY,
-                        ingredientes TEXT
+                        ingredientes TEXT,
+                        preco_base REAL
                     );
 
                     CREATE TABLE IF NOT EXISTS pedidos (
                         id_pedido INTEGER PRIMARY KEY,
                         id_cliente INTEGER,
+                        nome_cliente TEXT,
                         nome_hamburguer TEXT,
                         quantidade INTEGER,
                         tamanho TEXT,
                         data_hora DATETIME DEFAULT CURRENT_TIMESTAMP,
                         valor_total REAL,
                         FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente),
+                        FOREIGN KEY (nome_cliente) REFERENCES clientes(nome),
                         FOREIGN KEY (nome_hamburguer) REFERENCES hamburgueres(nome_hamburguer)
                     );
 
@@ -62,6 +65,9 @@ class DatabaseManager:
             raise Exception(f"Erro ao inserir empregado: {e}")
 
     def verify_empregado(self, username, senha):
+        if not username or not senha:
+            raise ValueError("Username e senha devem ser fornecidos")
+
         try:
             with sqlite3.connect(f"{self.__databasename}.db") as conn:
                 sql = "SELECT senha FROM empregados WHERE username = ?"
@@ -135,31 +141,36 @@ class DatabaseManager:
             raise Exception(f"Erro ao deletar cliente: {e}")
 
     # Hamburguers
-    def insert_hamburguer(self, nome_hamburguer, ingredientes):
+    def insert_hamburguer(self, nome_hamburguer, ingredientes, preco_base):
         try:
             with sqlite3.connect(f"{self.__databasename}.db") as conn:
-                sql = "INSERT INTO hamburgueres (nome_hamburguer, ingredientes) VALUES (?, ?);"
+                sql = "INSERT INTO hamburgueres (nome_hamburguer, ingredientes, preco_base) VALUES (?, ?, ?);"
                 with closing(conn.cursor()) as cursor:
-                    cursor.execute(sql, (nome_hamburguer, ingredientes))
+                    cursor.execute(sql, (nome_hamburguer, ingredientes, preco_base))
                 conn.commit()
         except sqlite3.Error as e:
             raise Exception(f"Erro ao inserir hamburguer: {e}")
 
     def get_hamburguer(self, nome_hamburguer=None, ingredientes=None):
         try:
-            if not nome_hamburguer and not ingredientes:
+            if nome_hamburguer is None and ingredientes is None:
                 raise ValueError("Pelo menos um critério de busca (nome_hamburguer ou ingredientes) deve ser fornecido")
 
             with sqlite3.connect(f"{self.__databasename}.db") as conn:
                 with closing(conn.cursor()) as cursor:
+                    query = None
+                    params = None
+
                     if nome_hamburguer:
                         query = "SELECT * FROM hamburgueres WHERE nome_hamburguer = ?"
-                        cursor.execute(query, (nome_hamburguer,))
+                        params = (nome_hamburguer,)
                     elif ingredientes:
                         query = "SELECT * FROM hamburgueres WHERE ingredientes = ?"
-                        cursor.execute(query, (ingredientes,))
+                        params = (ingredientes,)
 
+                    cursor.execute(query, params)
                     result = cursor.fetchone()
+
                     if result:
                         return result
                     else:
@@ -168,6 +179,9 @@ class DatabaseManager:
             raise Exception(f"Erro ao buscar hamburguer: {e}")
 
     def delete_hamburguer(self, nome_hamburguer):
+        if not nome_hamburguer:
+            raise ValueError("Nome do hamburguer não fornecido")
+
         try:
             with sqlite3.connect(f"{self.__databasename}.db") as conn:
                 sql = "DELETE FROM hamburgueres WHERE nome_hamburguer = ?;"
@@ -178,18 +192,31 @@ class DatabaseManager:
             raise Exception(f"Erro ao deletar hamburguer: {e}")
 
     # Pedidos
-    def insert_pedido(self, id_cliente, nome_hamburguer, quantidade, tamanho, valor_total, data_hora=None):
+    def insert_pedido(self, id_cliente, nome_cliente, nome_hamburguer, quantidade, tamanho, valor_total, data_hora=None):
         try:
+            if not id_cliente:
+                raise ValueError("Id do cliente não fornecido")
+            if not nome_hamburguer:
+                raise ValueError("Nome do hamburguer não fornecido")
+            if not quantidade:
+                raise ValueError("Quantidade não fornecida")
+            if not tamanho:
+                raise ValueError("Tamanho não fornecido")
+            if not valor_total:
+                raise ValueError("Valor total não fornecido")
+
             with sqlite3.connect(f"{self.__databasename}.db") as conn:
-                sql = "INSERT INTO pedidos (id_cliente, nome_hamburguer, quantidade, tamanho, data_hora, valor_total) VALUES (?, ?, ?, ?, ?, ?);"
+                sql = "INSERT INTO pedidos (id_cliente, nome_cliente, nome_hamburguer, quantidade, tamanho, data_hora, valor_total) VALUES (?, ?, ?, ?, ?, ?, ?);"
                 with closing(conn.cursor()) as cursor:
-                    cursor.execute(sql, (id_cliente, nome_hamburguer, quantidade, tamanho, data_hora if data_hora else datetime.now().strftime("%Y-%m-%d %H:%M:%S"), valor_total))
+                    cursor.execute(sql, (id_cliente, nome_cliente, nome_hamburguer, quantidade, tamanho, data_hora if data_hora else datetime.now().strftime("%Y-%m-%d %H:%M:%S"), valor_total))
                 conn.commit()
         except sqlite3.Error as e:
             raise Exception(f"Erro ao inserir pedido: {e}")
 
     # Utilitários
     def get_table(self, table):
+        if not table:
+            raise ValueError("Nome da tabela não fornecido")
         try:
             with sqlite3.connect(f"{self.__databasename}.db") as conn:
                 with closing(conn.cursor()) as cursor:
@@ -197,24 +224,31 @@ class DatabaseManager:
                     rows = cursor.fetchall()
                     return rows
         except sqlite3.Error as e:
-            raise Exception(f"Erro ao buscar tabela {table}: {e}")
+            raise Exception(f"Error procurando a tabela {table}: {e}")
 
     def populate_database(self):
         try:
-            self.insert_cliente("Ana", "Lisboa", "911234567")
-            self.insert_cliente("Bruno", "Porto", "912345678")
-            self.insert_cliente("Carla", "Coimbra", "913456789")
+            clients = [
+                ("Ana", "Lisboa", "911234567"),
+                ("Bruno", "Porto", "912345678"),
+                ("Carla", "Coimbra", "913456789")
+            ]
+            burgers = [
+                ("Cheeseburger", "Bread, Meat, Cheese, Lettuce, Tomato", 12.50),
+                ("Bacon Burger", "Bread, Meat, Bacon, Cheese, BBQ Sauce", 8.75),
+                ("Veggie Burger", "Bread, Veggie Burger, Lettuce, Tomato, Special Sauce", 15.00)
+            ]
 
-            self.insert_hamburguer("Cheeseburger", "Pão, Carne, Queijo, Alface, Tomate")
-            self.insert_hamburguer("Bacon Burger", "Pão, Carne, Bacon, Queijo, Molho BBQ")
-            self.insert_hamburguer("Veggie Burger", "Pão, Hambúrguer Vegetal, Alface, Tomate, Molho Especial")
-
-            now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            self.insert_pedido(1, "Cheeseburger", 2, "normal", 12.50, now)
-            self.insert_pedido(2, "Bacon Burger", 1, "duplo", 8.75, now)
-            self.insert_pedido(3, "Veggie Burger", 3, "normal", 15.00, now)
-
-            self.insert_empregado("Gustavo Cruz", "mothnue", "password123!")
+            with sqlite3.connect(f"{self.__databasename}.db") as conn:
+                cursor = conn.cursor()
+                for client in clients:
+                    self.insert_cliente(*client)
+                for burger in burgers:
+                    self.insert_hamburguer(*burger)
+                now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                
+                self.insert_empregado("Gustavo Cruz", "mothnue", "password123!")
+                cursor.close()
             print("Banco de dados populado com sucesso.")
         except sqlite3.Error as e:
             raise Exception(f"Erro ao popular banco de dados: {e}")
