@@ -164,5 +164,14 @@ class TestInserirClienteRoute(unittest.TestCase):
                 "telefone": "123456789"
             }
         })
+
+    def test_inserir_cliente_faltando_nome(self):
+        dados = {
+            "morada": "Morada",
+            "telefone": "123456789"
+        }
+
+        response = self.client.post('/cliente', json=dados)
+        self.assertEqual(response.status_code, 400)
 if __name__ == '__main__':
     unittest.main()
