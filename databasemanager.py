@@ -58,8 +58,8 @@ class DatabaseManager:
         try:
             with sqlite3.connect(f"{self.__databasename}.db") as conn:
                 sql = "INSERT INTO empregados (nome, username, senha) VALUES (?, ?, ?);"
-                with closing(conn.cursor()) as cursor:
-                    cursor.execute(sql, (nome, username, hashed_senha))
+                cursor = conn.cursor()
+                cursor.execute(sql, (nome, username, hashed_senha))
                 conn.commit()
         except sqlite3.Error as e:
             raise Exception(f"Erro ao inserir empregado: {e}")
@@ -71,13 +71,13 @@ class DatabaseManager:
         try:
             with sqlite3.connect(f"{self.__databasename}.db") as conn:
                 sql = "SELECT senha FROM empregados WHERE username = ?"
-                with closing(conn.cursor()) as cursor:
-                    cursor.execute(sql, (username,))
-                    result = cursor.fetchone()
-                    if result and bcrypt.checkpw(senha.encode("utf-8"), result[0]):
-                        return True
-                    else:
-                        return False
+                cursor = conn.cursor()
+                cursor.execute(sql, (username,))
+                result = cursor.fetchone()
+                if result and bcrypt.checkpw(senha.encode("utf-8"), result[0]):
+                    return True
+                else:
+                    return False
         except sqlite3.Error as e:
             raise Exception(f"Erro ao verificar empregado: {e}")
 
@@ -101,8 +101,8 @@ class DatabaseManager:
         try:
             with sqlite3.connect(f"{self.__databasename}.db") as conn:
                 sql = "INSERT INTO clientes (nome, morada, telefone) VALUES (?, ?, ?);"
-                with closing(conn.cursor()) as cursor:
-                    cursor.execute(sql, (nome, morada, telefone))
+                cursor = conn.cursor()
+                cursor.execute(sql, (nome, morada, telefone))
                 conn.commit()
         except sqlite3.Error as e:
             raise Exception(f"Erro ao inserir cliente: {e}")
@@ -110,28 +110,31 @@ class DatabaseManager:
     def get_cliente(self, id_cliente=None, nome=None, telefone=None):
         try:
             if not id_cliente and not nome and not telefone:
-                raise ValueError("Pelo menos um critério de busca (id_cliente, nome ou telefone) deve ser fornecido")
+                raise ValueError(
+                    "Pelo menos um critério de busca (id_cliente, nome ou telefone) deve ser fornecido"
+                )
 
             with sqlite3.connect(f"{self.__databasename}.db") as conn:
-                with closing(conn.cursor()) as cursor:
-                    if id_cliente:
-                        query = "SELECT * FROM clientes WHERE id_cliente = ?"
-                        cursor.execute(query, (id_cliente,))
-                    elif nome and telefone:
-                        query = "SELECT * FROM clientes WHERE nome = ? AND telefone = ?"
-                        cursor.execute(query, (nome, telefone))
-                    elif nome:
-                        query = "SELECT * FROM clientes WHERE nome = ?"
-                        cursor.execute(query, (nome,))
-                    elif telefone:
-                        query = "SELECT * FROM clientes WHERE telefone = ?"
-                        cursor.execute(query, (telefone,))
+                cursor = conn.cursor()
 
-                    result = cursor.fetchone()
-                    if result:
-                        return result
-                    else:
-                        raise Exception("Nenhum resultado encontrado para o cliente")
+                if id_cliente:
+                    query = "SELECT * FROM clientes WHERE id_cliente = ?"
+                    cursor.execute(query, (id_cliente,))
+                elif nome and telefone:
+                    query = "SELECT * FROM clientes WHERE nome = ? AND telefone = ?"
+                    cursor.execute(query, (nome, telefone))
+                elif nome:
+                    query = "SELECT * FROM clientes WHERE nome = ?"
+                    cursor.execute(query, (nome,))
+                elif telefone:
+                    query = "SELECT * FROM clientes WHERE telefone = ?"
+                    cursor.execute(query, (telefone,))
+
+                result = cursor.fetchone()
+                if result:
+                    return result
+                else:
+                    raise Exception("Nenhum resultado encontrado para o cliente")
         except sqlite3.Error as e:
             raise Exception(f"Erro ao buscar cliente: {e}")
 
@@ -139,8 +142,8 @@ class DatabaseManager:
         try:
             with sqlite3.connect(f"{self.__databasename}.db") as conn:
                 sql = "UPDATE clientes SET nome = ?, morada = ?, telefone = ? WHERE id_cliente = ?;"
-                with closing(conn.cursor()) as cursor:
-                    cursor.execute(sql, (nome, morada, telefone, id_cliente))
+                cursor = conn.cursor()
+                cursor.execute(sql, (nome, morada, telefone, id_cliente))
                 conn.commit()
         except sqlite3.Error as e:
             raise Exception(f"Erro ao atualizar cliente: {e}")
@@ -149,8 +152,8 @@ class DatabaseManager:
         try:
             with sqlite3.connect(f"{self.__databasename}.db") as conn:
                 sql = "DELETE FROM clientes WHERE id_cliente = ?;"
-                with closing(conn.cursor()) as cursor:
-                    cursor.execute(sql, (id_cliente,))
+                cursor = conn.cursor()
+                cursor.execute(sql, (id_cliente,))
                 conn.commit()
         except sqlite3.Error as e:
             raise Exception(f"Erro ao deletar cliente: {e}")
@@ -160,8 +163,8 @@ class DatabaseManager:
         try:
             with sqlite3.connect(f"{self.__databasename}.db") as conn:
                 sql = "INSERT INTO hamburgueres (nome_hamburguer, ingredientes, preco_base) VALUES (?, ?, ?);"
-                with closing(conn.cursor()) as cursor:
-                    cursor.execute(sql, (nome_hamburguer, ingredientes, preco_base))
+                cursor = conn.cursor()
+                cursor.execute(sql, (nome_hamburguer, ingredientes, preco_base))
                 conn.commit()
         except sqlite3.Error as e:
             raise Exception(f"Erro ao inserir hamburguer: {e}")
@@ -173,24 +176,22 @@ class DatabaseManager:
                 raise ValueError("Pelo menos um critério de busca (nome_hamburguer ou ingredientes) deve ser fornecido")
 
             with sqlite3.connect(f"{self.__databasename}.db") as conn:
-                with closing(conn.cursor()) as cursor:
-                    query = None
-                    params = None
+                cursor = conn.cursor()
 
-                    if nome_hamburguer:
-                        query = "SELECT * FROM hamburgueres WHERE nome_hamburguer = ?"
-                        params = (nome_hamburguer,)
-                    elif ingredientes:
-                        query = "SELECT * FROM hamburgueres WHERE ingredientes = ?"
-                        params = (ingredientes,)
+                if nome_hamburguer:
+                    query = "SELECT * FROM hamburgueres WHERE nome_hamburguer = ?"
+                    params = (nome_hamburguer,)
+                elif ingredientes:
+                    query = "SELECT * FROM hamburgueres WHERE ingredientes = ?"
+                    params = (ingredientes,)
 
-                    cursor.execute(query, params)
-                    result = cursor.fetchone()
+                cursor.execute(query, params)
+                result = cursor.fetchone()
 
-                    if result:
-                        return result
-                    else:
-                        raise Exception("Nenhum resultado encontrado para o hamburguer fornecido")
+                if result:
+                    return result
+                else:
+                    raise Exception("Nenhum resultado encontrado para o hamburguer fornecido")
         except sqlite3.Error as e:
             raise Exception(f"Erro ao buscar hamburguer: {e}")
 
@@ -201,8 +202,8 @@ class DatabaseManager:
         try:
             with sqlite3.connect(f"{self.__databasename}.db") as conn:
                 sql = "DELETE FROM hamburgueres WHERE nome_hamburguer = ?;"
-                with closing(conn.cursor()) as cursor:
-                    cursor.execute(sql, (nome_hamburguer,))
+                cursor = conn.cursor()
+                cursor.execute(sql, (nome_hamburguer,))
                 conn.commit()
         except sqlite3.Error as e:
             raise Exception(f"Erro ao deletar hamburguer: {e}")
@@ -222,9 +223,9 @@ class DatabaseManager:
                 raise ValueError("Valor total não fornecido")
 
             with sqlite3.connect(f"{self.__databasename}.db") as conn:
+                cursor = conn.cursor()
                 sql = "INSERT INTO pedidos (id_cliente, nome_cliente, nome_hamburguer, quantidade, tamanho, data_hora, valor_total) VALUES (?, ?, ?, ?, ?, ?, ?);"
-                with closing(conn.cursor()) as cursor:
-                    cursor.execute(sql, (id_cliente, nome_cliente, nome_hamburguer, quantidade, tamanho, data_hora if data_hora else datetime.now().strftime("%Y-%m-%d %H:%M:%S"), valor_total))
+                cursor.execute(sql, (id_cliente, nome_cliente, nome_hamburguer, quantidade, tamanho, data_hora if data_hora else datetime.now().strftime("%Y-%m-%d %H:%M:%S"), valor_total))
                 conn.commit()
         except sqlite3.Error as e:
             raise Exception(f"Erro ao inserir pedido: {e}")
@@ -235,10 +236,10 @@ class DatabaseManager:
             raise ValueError("Nome da tabela não fornecido")
         try:
             with sqlite3.connect(f"{self.__databasename}.db") as conn:
-                with closing(conn.cursor()) as cursor:
-                    cursor.execute(f"SELECT * FROM {table}")
-                    rows = cursor.fetchall()
-                    return rows
+                cursor = conn.cursor()
+                cursor.execute(f"SELECT * FROM {table}")
+                rows = cursor.fetchall()
+                return rows
         except sqlite3.Error as e:
             raise Exception(f"Error procurando a tabela {table}: {e}")
 
