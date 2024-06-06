@@ -345,7 +345,7 @@ class DeleterHamburguerScreen(Screen):
 Builder.load_file('login.kv')
 
 
-class LoginApp(App):
+class HamburgueriaApp(App):
     def build(self):
         sm = ScreenManager()
         sm.add_widget(LoginScreen(name='login'))
@@ -367,6 +367,6 @@ class LoginApp(App):
 
 
 if __name__ == "__main__":
-    LoginApp().run()
+    HamburgueriaApp().run()
 
 
