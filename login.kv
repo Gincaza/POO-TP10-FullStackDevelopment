@@ -57,7 +57,7 @@
             on_press: root.deletar_cliente()
         Button:
             text: "Voltar"
-            on_press: root.manager.current = 'main'
+            on_press: root.voltar()
 
 <AdicionarClienteScreen>:
     nome: nome
@@ -107,7 +107,7 @@
             on_press: root.deletar_hamburguer()
         Button:
             text: "Voltar"
-            on_press: root.manager.current = 'main'
+            on_press: root.voltar()
 
 <ObterHamburgueresScreen>:
     hamburgueres_label: hamburgueres_label
@@ -178,11 +178,25 @@
     BoxLayout:
         orientation: 'vertical'
         Button:
+            text: "Obter Pedidos"
+            on_press: root.obter_pedidos()
+        Button:
             text: "Registrar Pedido"
             on_press: root.registrar_pedidos()
         Button:
             text: "Voltar"
-            on_press: root.manager.current = 'main'
+            on_press: root.voltar()
+
+<ObterPedidosScreen>:
+    pedidos_label: pedidos_label
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            id: pedidos_label
+            text: ""
+        Button:
+            text: "Voltar"
+            on_press: root.voltar()
 
 <DeletarClienteScreen>:
     BoxLayout:
@@ -221,7 +235,7 @@
             values: []
         Button:
             text: 'Deletar'
-            on_release: root.deletar(nome_hamburguer.text)
+            on_release: root.deletar()
         Button:
             text: 'Voltar'
             on_release: root.voltar()
