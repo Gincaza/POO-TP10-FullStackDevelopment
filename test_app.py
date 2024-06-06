@@ -174,5 +174,26 @@ class TestInserirClienteRoute(unittest.TestCase):
         response = self.client.post('/cliente', json=dados)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.get_json(), {"erro": "nome é necessário"})
+
+    def test_inserir_cliente_faltando_morada(self):
+        dados = {
+            "nome": "Novo Cliente",
+            "telefone": "123456789"
+        }
+
+        response = self.client.post('/cliente', json=dados)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.get_json(), {"erro": "morada é necessário"})
+
+    def test_inserir_cliente_faltando_telefone(self):
+        dados = {
+            "nome": "Novo Cliente",
+            "morada": "Morada"
+        }
+
+        response = self.client.post('/cliente', json=dados)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.get_json(), {"erro": "telefone é necessário"})
+
 if __name__ == '__main__':
     unittest.main()
