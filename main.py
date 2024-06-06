@@ -241,31 +241,32 @@ class InserirHamburguerScreen(Screen):
             print(f"Error: {e}")
 
 class DeleterHamburguerScreen(Screen):
+    nome_hamburguer = ObjectProperty(None)
+
+    def on_enter(self, *args):
+        self.nome_hamburguer.values = self.get_hamburgueres()
+
     def voltar(self):
         self.manager.current = 'hamburgueres'
     
-    def obter_hamburgueres(self):
-        """
-        obtem a lista de hamburgueres do servidor e atualiza o rótulo na tela de hamburgueres.
-        """
+    def get_hamburgueres(self):
         url = "http://127.0.0.1:5000/hamburguer"
         try:
             response = requests.get(url)
-
             if response.status_code == 200:
                 hamburgueres = response.json()
-
-                hamburgueres_texto = "\n".join([f"Nome: {hamburguer['nome_hamburguer']}" for hamburguer in hamburgueres])
-            
-                self.hamburgueres_label.text = hamburgueres_texto
+                # Retorna apenas os nomes dos hambúrgueres
+                return [hamburguer['nome_hamburguer'] for hamburguer in hamburgueres]
             else:
-                print(f"Failed to obtain hamburgueres: {response.text}")
+                print("Falha ao obter hambúrgueres")
+                return []
         except requests.exceptions.RequestException as e:
-            print(f"Error: {e}")
+            print(f"Erro: {e}")
+            return []
     
-    def deletar(self, id_hamburguer):
+    def deletar(self):
         url = f"http://127.0.0.1:5000/hamburguer"
-        data = {"hamburguer_id": id_hamburguer}
+        data = {"nome_hamburguer": self.nome_hamburguer.text}
         try:
             response = requests.delete(url, json=data)
             if response.status_code == 201:
