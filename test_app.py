@@ -90,5 +90,16 @@ class TestAtualizarClienteRoute(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.get_json(), {"erro": "Erro ao atualizar o banco de dados"})
 
+    def test_atualizar_cliente_faltando_id_cliente(self):
+        dados = {
+            "nome": "Cliente Atualizado",
+            "morada": "Nova Morada",
+            "telefone": "123456789"
+        }
+
+        response = self.client.put('/cliente', json=dados)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.get_json(), {"erro": "id_cliente é necessário"})
+
 if __name__ == '__main__':
     unittest.main()
