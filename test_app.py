@@ -474,5 +474,24 @@ class TestRegisterRoute(unittest.TestCase):
         response = self.client.post('/register', json=dados)
         self.assertEqual(response.status_code, 500)
         self.assertEqual(response.get_json(), {"erro": "Erro ao verificar usuário existente"})
+
+    @patch.object(database_context, 'get_empregado')
+    @patch.object(database_context, 'insert_empregado')
+    @patch.object(database_context, 'verify_empregado')
+    def test_register_erro_durante_registro(self, mock_verify_empregado, mock_insert_empregado, mock_get_empregado):
+        # Mocking que o nome de usuário não está em uso
+        mock_get_empregado.return_value = None
+        # Mocking uma exceção ao inserir empregado
+        mock_insert_empregado.side_effect = Exception("Erro ao registrar usuário")
+
+        dados = {
+            "nome": "Usuario Teste",
+            "username": "usuario_teste",
+            "senha": "senha_teste"
+        }
+
+        response = self.client.post('/register', json=dados)
+        self.assertEqual(response.status_code, 500)
+        self.assertEqual(response.get_json(), {"erro": "Erro ao registrar usuário"})
 if __name__ == '__main__':
     unittest.main()
