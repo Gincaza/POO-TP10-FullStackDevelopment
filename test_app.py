@@ -310,5 +310,16 @@ class TestInserirHamburguerRoute(unittest.TestCase):
             }
         })
 
+    def test_inserir_hamburguer_dados_incompletos(self):
+        dados = {
+            "nome_hamburguer": "Novo Hamburguer",
+            "ingredientes": "Ingredientes"
+            # Preço base faltando
+        }
+
+        response = self.client.post('/hamburguer', json=dados)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.get_json(), {"error": "Dados incompletos"})
+
 if __name__ == '__main__':
     unittest.main()
