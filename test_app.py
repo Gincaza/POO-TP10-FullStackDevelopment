@@ -434,5 +434,20 @@ class TestRegisterRoute(unittest.TestCase):
         response = self.client.post('/register', json=dados)
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.get_json(), {"message": "Registrado com sucesso!"})
+
+    @patch.object(database_context, 'get_empregado')
+    def test_register_nome_usuario_em_uso(self, mock_get_empregado):
+        # Mocking que o nome de usuário já está em uso
+        mock_get_empregado.return_value = {"username": "usuario_teste"}
+
+        dados = {
+            "nome": "Usuario Teste",
+            "username": "usuario_teste",
+            "senha": "senha_teste"
+        }
+
+        response = self.client.post('/register', json=dados)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.get_json(), {"erro": "Nome de usuário já está em uso"})
 if __name__ == '__main__':
     unittest.main()
