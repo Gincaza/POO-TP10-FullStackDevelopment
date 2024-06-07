@@ -545,5 +545,9 @@ class TestGetPedidosRoute(unittest.TestCase):
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.get_json(), {"erro": "Nenhum pedido encontrado"})
 
+class TestRegistrarPedidoRoute(unittest.TestCase):
+    def setUp(self):
+        self.client = app.test_client()
+
 if __name__ == '__main__':
     unittest.main()
