@@ -549,5 +549,25 @@ class TestRegistrarPedidoRoute(unittest.TestCase):
     def setUp(self):
         self.client = app.test_client()
 
+    @patch.object(database_context, 'insert_pedido')
+    @patch.object(database_context, 'get_cliente')
+    @patch.object(database_context, 'get_hamburguer')
+    def test_registrar_pedido_sucesso(self, mock_get_hamburguer, mock_get_cliente, mock_insert_pedido):
+        # Mocking as respostas do banco de dados
+        mock_get_hamburguer.return_value = ["Hamburguer Teste", "Ingredientes Teste", "10.0"]
+        mock_get_cliente.return_value = {"id_cliente": 1, "nome": "Cliente Teste"}
+
+        dados = {
+            "id_cliente": 1,
+            "nome_cliente": "Cliente Teste",
+            "nome_hamburguer": "Hamburguer Teste",
+            "quantidade": 2,
+            "tamanho": "normal",
+            "data_hora": "2023-01-01T12:00:00"
+        }
+
+        response = self.client.post('/pedido', json=dados)
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.get_json(), {"message": "Pedido registrado com sucesso!"})
 if __name__ == '__main__':
     unittest.main()
