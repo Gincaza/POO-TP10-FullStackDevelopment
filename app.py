@@ -311,6 +311,7 @@ def registrar_pedido():
         return jsonify({"message": "Pedido registrado com sucesso!"}), 201
     except Exception as e:
         return jsonify({"erro": str(e)}), 500
+    
 if __name__ == "__main__":
     app.run(debug=True)
 
