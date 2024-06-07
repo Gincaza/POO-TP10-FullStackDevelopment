@@ -346,5 +346,26 @@ class TestDeletarHamburguerRoute(unittest.TestCase):
             }
         })
         mock_delete_hamburguer.assert_called_once_with("Hamburguer Deletado")
+
+    @patch.object(database_context, 'get_hamburguer')
+    def test_deletar_hamburguer_nao_encontrado(self, mock_get_hamburguer):
+        # Mocking que o hamburguer não é encontrado
+        mock_get_hamburguer.return_value = None
+
+        dados = {
+            "nome_hamburguer": "Hamburguer Inexistente"
+        }
+
+        response = self.client.delete('/hamburguer', json=dados)
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.get_json(), {"erro": "Hamburguer não encontrado"})
+
+    def test_deletar_hamburguer_sem_nome(self):
+        dados = {}
+
+        response = self.client.delete('/hamburguer', json=dados)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.get_json(), {"erro": "Nome do hamburguer não fornecido"})
+
 if __name__ == '__main__':
     unittest.main()
