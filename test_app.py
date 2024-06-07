@@ -326,5 +326,25 @@ class TestDeletarHamburguerRoute(unittest.TestCase):
         app.config['TESTING'] = True
         self.client = app.test_client()
 
+    @patch.object(database_context, 'get_hamburguer')
+    @patch.object(database_context, 'delete_hamburguer')
+    def test_deletar_hamburguer_sucesso(self, mock_delete_hamburguer, mock_get_hamburguer):
+        # Mocking a resposta do banco de dados
+        mock_get_hamburguer.return_value = ('Hamburguer Deletado', 'Ingredientes', 10.99)
+
+        dados = {
+            "nome_hamburguer": "Hamburguer Deletado"
+        }
+
+        response = self.client.delete('/hamburguer', json=dados)
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.get_json(), {
+            "mensagem": "Hamburguer deletado com sucesso!",
+            "dados": {
+                "nome_hamburguer": "Hamburguer Deletado",
+                "ingredientes": "Ingredientes"
+            }
+        })
+        mock_delete_hamburguer.assert_called_once_with("Hamburguer Deletado")
 if __name__ == '__main__':
     unittest.main()
