@@ -386,5 +386,19 @@ class TestLoginRoute(unittest.TestCase):
         response = self.client.post('/login', json=dados)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.get_json(), {"message": "Usuário autenticado!"})
+
+    @patch.object(database_context, 'verify_empregado')
+    def test_login_falha(self, mock_verify_empregado):
+        # Mocking a resposta de verificação do banco de dados
+        mock_verify_empregado.return_value = False
+
+        dados = {
+            "username": "usuario_teste",
+            "senha": "senha_errada"
+        }
+
+        response = self.client.post('/login', json=dados)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.get_json(), {"message": "Não conseguiu se logar!"})
 if __name__ == '__main__':
     unittest.main()
