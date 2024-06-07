@@ -4,7 +4,7 @@ Este projeto é a implementação de uma aplicação web completa que consiste e
 
 ## Instalação
 
-1. Crie uma máquina virtual com o `venv` utilizando o comando `python3 -m venv .myvenv` no terminal.
+1. Crie uma máquina virtual com o `venv` utilizando o comando `python3 -m venv .venv` no terminal.
 2. Reinicie o VSCode e ative a máquina virtual com o comando `activate` no terminal.
 3. Instale as dependências com o comando `pip install -r requirements.txt` no terminal.
 4. Preencha o banco de dados com o comando `python3 populate.py` no terminal.
