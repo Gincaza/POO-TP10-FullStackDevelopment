@@ -255,7 +255,7 @@ class TestObterTabelaHamburguerRoute(unittest.TestCase):
                 "preco_base": 12.99
             }
         ])
-
+    
     @patch.object(database_context, 'get_table')
     def test_obter_tabela_hamburguer_linha_vazia(self, mock_get_table):
         # Mocking uma linha vazia no banco de dados
@@ -263,7 +263,7 @@ class TestObterTabelaHamburguerRoute(unittest.TestCase):
             ('Hamburguer 1', None, 10.99),
             ('Hamburguer 2', 'Ingredientes 2', None)
         ]
-
+      
         response = self.client.get('/hamburguer')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.get_json(), {"erro": "Linha vazia encontrada na tabela de hambúrgueres"})
@@ -309,5 +309,6 @@ class TestInserirHamburguerRoute(unittest.TestCase):
                 "preco_base": 15.99
             }
         })
+
 if __name__ == '__main__':
     unittest.main()
