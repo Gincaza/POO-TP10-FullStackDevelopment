@@ -321,5 +321,10 @@ class TestInserirHamburguerRoute(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.get_json(), {"error": "Dados incompletos"})
 
+class TestDeletarHamburguerRoute(unittest.TestCase):
+    def setUp(self):
+        app.config['TESTING'] = True
+        self.client = app.test_client()
+
 if __name__ == '__main__':
     unittest.main()
