@@ -127,7 +127,7 @@ def obter_tabela_hamburguer():
         linhas_hamburgueres = database_context.get_table("hamburgueres")
         dados_linhas = []
         for linha in linhas_hamburgueres:
-            if linha is None:
+            if linha is None or any(coluna is None for coluna in linha):
                 raise Exception("Linha vazia encontrada na tabela de hambúrgueres")
             if len(linha) < 3:
                 raise Exception("Linha da tabela de hambúrgueres com menos de 3 colunas")
@@ -311,6 +311,7 @@ def registrar_pedido():
         return jsonify({"message": "Pedido registrado com sucesso!"}), 201
     except Exception as e:
         return jsonify({"erro": str(e)}), 500
+    
 if __name__ == "__main__":
     app.run(debug=True)
 

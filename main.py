@@ -10,6 +10,9 @@ from operations import Operations
 
 
 class LoginScreen(Screen):
+    username = ObjectProperty(None)
+    password = ObjectProperty(None)
+    
     def login(self):
         url = "http://127.0.0.1:5000/login"
         data = {
@@ -152,6 +155,9 @@ class RegistrarPedidoScreen(Screen):
     def registrar(self):
         url = "http://127.0.0.1:5000/pedido"
         cliente_selecionado = self.cliente.text
+        if not cliente_selecionado or cliente_selecionado == "Cliente":
+            print("Error: precisa especificar um id_cliente")
+            return
         nome_cliente, id_cliente = cliente_selecionado.split(" (ID: ")
         id_cliente = id_cliente[:-1]
 
@@ -203,11 +209,23 @@ class ObterClientesScreen(Screen):
         self.manager.current = 'clientes'
 
 class DeletarClienteScreen(Screen):
+    cliente_id = ObjectProperty(None)
+
+    def on_enter(self, *args):
+        clientes = Operations().get_clientes()
+        self.cliente_id.values = [(f"{cliente['nome']} (ID: {cliente['id_cliente']})") for cliente in clientes]
+
     def voltar(self):
         self.manager.current = 'clientes'
     
-    def deletar(self, id_cliente):
+    def deletar(self):
         url = f"http://127.0.0.1:5000/cliente"
+        cliente_selecionado = self.cliente_id.text
+        if not cliente_selecionado or cliente_selecionado == "ID do Cliente":
+            print("Error: precisa especificar um id_cliente")
+            return
+        _, id_cliente = cliente_selecionado.split(" (ID: ")
+        id_cliente = id_cliente[:-1]
         data = {"cliente_id": id_cliente}
         try:
             response = requests.delete(url, json=data)
