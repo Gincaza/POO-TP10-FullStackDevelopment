@@ -569,5 +569,23 @@ class TestRegistrarPedidoRoute(unittest.TestCase):
         response = self.client.post('/pedido', json=dados)
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.get_json(), {"message": "Pedido registrado com sucesso!"})
+    
+    @patch.object(database_context, 'get_hamburguer')
+    def test_registrar_pedido_hamburguer_nao_encontrado(self, mock_get_hamburguer):
+        # Mocking que o hambúrguer não foi encontrado
+        mock_get_hamburguer.return_value = None
+
+        dados = {
+            "id_cliente": 1,
+            "nome_cliente": "Cliente Teste",
+            "nome_hamburguer": "Hamburguer Inexistente",
+            "quantidade": 2,
+            "tamanho": "normal",
+            "data_hora": "2023-01-01T12:00:00"
+        }
+
+        response = self.client.post('/pedido', json=dados)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.get_json(), {"erro": "Hamburguer não encontrado"})
 if __name__ == '__main__':
     unittest.main()
