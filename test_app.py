@@ -417,5 +417,22 @@ class TestRegisterRoute(unittest.TestCase):
         app.config['TESTING'] = True
         self.client = app.test_client()
 
+    @patch.object(database_context, 'get_empregado')
+    @patch.object(database_context, 'insert_empregado')
+    @patch.object(database_context, 'verify_empregado')
+    def test_register_sucesso(self, mock_verify_empregado, mock_insert_empregado, mock_get_empregado):
+        # Mocking as respostas do banco de dados
+        mock_get_empregado.return_value = None  # Nome de usuário não está em uso
+        mock_verify_empregado.return_value = True  # Verificação de sucesso após inserção
+
+        dados = {
+            "nome": "Usuario Teste",
+            "username": "usuario_teste",
+            "senha": "senha_teste"
+        }
+
+        response = self.client.post('/register', json=dados)
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.get_json(), {"message": "Registrado com sucesso!"})
 if __name__ == '__main__':
     unittest.main()
