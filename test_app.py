@@ -518,5 +518,22 @@ class TestGetPedidosRoute(unittest.TestCase):
         # Configurar a aplicação para o modo de teste
         app.config['TESTING'] = True
         self.client = app.test_client()
+
+    @patch.object(database_context, 'get_table')
+    def test_get_pedidos_sucesso(self, mock_get_table):
+        # Mocking a resposta do banco de dados com pedidos
+        mock_get_table.return_value = [
+            {"id_pedido": 1, "cliente": "Cliente 1", "total": 100.0},
+            {"id_pedido": 2, "cliente": "Cliente 2", "total": 150.0}
+        ]
+
+        response = self.client.get('/pedido')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get_json(), {
+            "pedidos": [
+                {"id_pedido": 1, "cliente": "Cliente 1", "total": 100.0},
+                {"id_pedido": 2, "cliente": "Cliente 2", "total": 150.0}
+            ]
+        })
 if __name__ == '__main__':
     unittest.main()
