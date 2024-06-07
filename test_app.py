@@ -400,5 +400,16 @@ class TestLoginRoute(unittest.TestCase):
         response = self.client.post('/login', json=dados)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.get_json(), {"message": "Não conseguiu se logar!"})
+
+    def test_login_dados_incompletos(self):
+        dados = {
+            "username": "usuario_teste"
+            # Senha faltando
+        }
+
+        response = self.client.post('/login', json=dados)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.get_json(), {"erro": "Username e senha são obrigatórios"})
+
 if __name__ == '__main__':
     unittest.main()
