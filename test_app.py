@@ -535,5 +535,15 @@ class TestGetPedidosRoute(unittest.TestCase):
                 {"id_pedido": 2, "cliente": "Cliente 2", "total": 150.0}
             ]
         })
+
+    @patch.object(database_context, 'get_table')
+    def test_get_pedidos_vazio(self, mock_get_table):
+        # Mocking a resposta do banco de dados sem pedidos
+        mock_get_table.return_value = []
+
+        response = self.client.get('/pedido')
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.get_json(), {"erro": "Nenhum pedido encontrado"})
+
 if __name__ == '__main__':
     unittest.main()
