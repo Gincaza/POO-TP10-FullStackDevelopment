@@ -449,5 +449,15 @@ class TestRegisterRoute(unittest.TestCase):
         response = self.client.post('/register', json=dados)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.get_json(), {"erro": "Nome de usuário já está em uso"})
+
+    def test_register_dados_incompletos(self):
+        dados = {
+            "nome": "Usuario Teste",
+            # username e senha faltando
+        }
+
+        response = self.client.post('/register', json=dados)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.get_json(), {"erro": "Nome, username e senha são obrigatórios"})
 if __name__ == '__main__':
     unittest.main()
