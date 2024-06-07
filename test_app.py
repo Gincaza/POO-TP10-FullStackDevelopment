@@ -624,5 +624,23 @@ class TestRegistrarPedidoRoute(unittest.TestCase):
     @patch.object(database_context, 'get_hamburguer')
     @patch.object(database_context, 'get_cliente')
     @patch.object(database_context, 'insert_pedido')
+    def test_registrar_pedido_tamanho_invalido(self, mock_insert_pedido, mock_get_cliente, mock_get_hamburguer):
+        # Mocking as respostas do banco de dados
+        mock_get_hamburguer.return_value = ["Hamburguer Teste", "Ingredientes Teste", "10.0"]
+        mock_get_cliente.return_value = {"id_cliente": 1, "nome": "Cliente Teste"}
+
+        dados = {
+            "id_cliente": 1,
+            "nome_cliente": "Cliente Teste",
+            "nome_hamburguer": "Hamburguer Teste",
+            "quantidade": 2,
+            "tamanho": "gigante",  # tamanho errado
+            "data_hora": "2023-01-01T12:00:00"
+        }
+
+        response = self.client.post('/pedido', json=dados)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.get_json(), {"erro": "Tamanho inválido"})
+
 if __name__ == '__main__':
     unittest.main()
