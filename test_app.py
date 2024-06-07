@@ -229,8 +229,6 @@ class TestDeletarClienteRoute(unittest.TestCase):
 
 class TestObterTabelaHamburguerRoute(unittest.TestCase):
     def setUp(self):
-        # Configurar a aplicação para o modo de teste
-        app.config['TESTING'] = True
         self.client = app.test_client()
 
     @patch.object(database_context, 'get_table')
@@ -282,8 +280,6 @@ class TestObterTabelaHamburguerRoute(unittest.TestCase):
 
 class TestInserirHamburguerRoute(unittest.TestCase):
     def setUp(self):
-        # Configurar a aplicação para o modo de teste
-        app.config['TESTING'] = True
         self.client = app.test_client()
 
     @patch.object(database_context, 'insert_hamburguer')
@@ -323,7 +319,6 @@ class TestInserirHamburguerRoute(unittest.TestCase):
 
 class TestDeletarHamburguerRoute(unittest.TestCase):
     def setUp(self):
-        app.config['TESTING'] = True
         self.client = app.test_client()
 
     @patch.object(database_context, 'get_hamburguer')
@@ -369,8 +364,6 @@ class TestDeletarHamburguerRoute(unittest.TestCase):
 
 class TestLoginRoute(unittest.TestCase):
     def setUp(self):
-        # Configurar a aplicação para o modo de teste
-        app.config['TESTING'] = True
         self.client = app.test_client()
 
     @patch.object(database_context, 'verify_empregado')
@@ -413,8 +406,6 @@ class TestLoginRoute(unittest.TestCase):
 
 class TestRegisterRoute(unittest.TestCase):
     def setUp(self):
-        # Configurar a aplicação para o modo de teste
-        app.config['TESTING'] = True
         self.client = app.test_client()
 
     @patch.object(database_context, 'get_empregado')
