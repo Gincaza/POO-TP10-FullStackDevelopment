@@ -4,8 +4,6 @@ from app import app, database_context
 
 class TestClienteRoute(unittest.TestCase):
     def setUp(self):
-        # Configurar a aplicação para o modo de teste
-        app.config['TESTING'] = True
         self.client = app.test_client()
 
     @patch.object(database_context, 'get_table')
@@ -44,8 +42,6 @@ class TestClienteRoute(unittest.TestCase):
 
 class TestAtualizarClienteRoute(unittest.TestCase):
     def setUp(self):
-        # Configurar a aplicação para o modo de teste
-        app.config['TESTING'] = True
         self.client = app.test_client()
 
     @patch.object(database_context, 'update_cliente')
@@ -120,8 +116,6 @@ class TestAtualizarClienteRoute(unittest.TestCase):
 
 class TestInserirClienteRoute(unittest.TestCase):
     def setUp(self):
-        # Configurar a aplicação para o modo de teste
-        app.config['TESTING'] = True
         self.client = app.test_client()
 
     @patch.object(database_context, 'insert_cliente')
@@ -181,8 +175,6 @@ class TestInserirClienteRoute(unittest.TestCase):
 
 class TestDeletarClienteRoute(unittest.TestCase):
     def setUp(self):
-        # Configurar a aplicação para o modo de teste
-        app.config['TESTING'] = True
         self.client = app.test_client()
 
     @patch.object(database_context, 'get_cliente')
